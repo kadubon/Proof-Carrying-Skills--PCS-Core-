@@ -1,0 +1,112 @@
+{
+  "contract": {
+    "pcs_version": "v1",
+    "contract_id": "sha256:6ace7589cb09e115eb00dabf6768131da8ba2208de269414f6ac1b7a76c76dec",
+    "skill_id": "demo.echo",
+    "version": "1.0.0",
+    "ttl_seconds": 86400,
+    "io": {
+      "input": {
+        "mode": "json",
+        "max_bytes": 4096
+      },
+      "output": {
+        "mode": "json",
+        "max_bytes": 4096
+      }
+    },
+    "predicate_vm": {
+      "name": "opvm-v1",
+      "gas_predicate": 5000,
+      "gas_per_byte": 1,
+      "max_depth": 32,
+      "max_ast_nodes": 512,
+      "max_value_bytes": 4096,
+      "int_overflow": "reject"
+    },
+    "canonicalization": {
+      "name": "qjcs-v1",
+      "default_scale10": 6,
+      "tensor_chunk_bytes": 4,
+      "max_scale10": 18
+    },
+    "precondition": {
+      "opvm": {
+        "and": [
+          {
+            "eq": [
+              {
+                "get": "/in/task"
+              },
+              {
+                "const": "echo"
+              }
+            ]
+          },
+          {
+            "ge": [
+              {
+                "get": "/in/value"
+              },
+              {
+                "const": 0
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "postcondition": {
+      "opvm": {
+        "eq": [
+          {
+            "get": "/out/result"
+          },
+          {
+            "get": "/in/value"
+          }
+        ]
+      }
+    },
+    "resource_bounds": {
+      "max_receipt_bytes": 65536,
+      "max_inclusion_proofs": 32,
+      "max_proof_len": 32,
+      "max_predicates": 16,
+      "max_steps": 16,
+      "max_chunk_bytes": 4096,
+      "max_proven_bytes": 65536
+    },
+    "receipt_rule": {
+      "allowed_profiles": [
+        "VTR"
+      ],
+      "profile_params": {
+        "VTR": {
+          "max_assertions": 8
+        }
+      }
+    }
+  },
+  "invocation_header": {
+    "pcs_version": "v1",
+    "contract_id": "sha256:6ace7589cb09e115eb00dabf6768131da8ba2208de269414f6ac1b7a76c76dec",
+    "input_json_qjcs_sha256": "sha256:27876b62129d0ee68789c7ab70ef8fdff847a4f44635ad8a1b590a124b6c2f7c",
+    "nonce_b64": "AQEBAQEBAQEBAQEBAQEBAQ=="
+  },
+  "in": {
+    "task": "echo",
+    "value": -1
+  },
+  "out": {
+    "result": -1
+  },
+  "receipt": {
+    "pcs_version": "v1",
+    "receipt_type": "VTR",
+    "contract_id": "sha256:6ace7589cb09e115eb00dabf6768131da8ba2208de269414f6ac1b7a76c76dec",
+    "skill_id": "demo.echo",
+    "invocation_id": "sha256:3247373530e0d015174c087d71f0d76b2f43ff1654ef0730edaca282d7c840f4",
+    "out_json_qjcs_sha256": "sha256:3e9829287ce5636554b24f6d0a0e23324bce797283354bfba7d2d0e617d96276"
+  }
+}

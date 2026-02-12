@@ -1,0 +1,5 @@
+{
+  "mode": "schema",
+  "schema": "schemas/pcs-v1-extensions-placeholder.schema.json",
+  "valid": true
+}

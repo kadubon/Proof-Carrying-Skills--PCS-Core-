@@ -1,0 +1,5 @@
+{
+  "decision": "REJECT",
+  "rejection_code": "SCHEMA_ERROR",
+  "decision_sha256": "sha256:463cb56f6672a842d985ebc7020db0304e546e05b0d9ec18d8be5f50647a5c65"
+}

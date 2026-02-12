@@ -1,0 +1,5 @@
+{
+  "decision": "REJECT",
+  "rejection_code": "INVOCATION_MISMATCH",
+  "decision_sha256": "sha256:f9977c3b0d94d0aea5954e27f1efc8fc3dc950b0c4ca653d43af2bb24200438f"
+}

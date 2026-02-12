@@ -1,0 +1,289 @@
+{
+  "from_bundle": {
+    "contract": {
+      "pcs_version": "v1",
+      "contract_id": "sha256:6ace7589cb09e115eb00dabf6768131da8ba2208de269414f6ac1b7a76c76dec",
+      "skill_id": "demo.echo",
+      "version": "1.0.0",
+      "ttl_seconds": 86400,
+      "io": {
+        "input": {
+          "mode": "json",
+          "max_bytes": 4096
+        },
+        "output": {
+          "mode": "json",
+          "max_bytes": 4096
+        }
+      },
+      "predicate_vm": {
+        "name": "opvm-v1",
+        "gas_predicate": 5000,
+        "gas_per_byte": 1,
+        "max_depth": 32,
+        "max_ast_nodes": 512,
+        "max_value_bytes": 4096,
+        "int_overflow": "reject"
+      },
+      "canonicalization": {
+        "name": "qjcs-v1",
+        "default_scale10": 6,
+        "tensor_chunk_bytes": 4,
+        "max_scale10": 18
+      },
+      "precondition": {
+        "opvm": {
+          "and": [
+            {
+              "eq": [
+                {
+                  "get": "/in/task"
+                },
+                {
+                  "const": "echo"
+                }
+              ]
+            },
+            {
+              "ge": [
+                {
+                  "get": "/in/value"
+                },
+                {
+                  "const": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "postcondition": {
+        "opvm": {
+          "eq": [
+            {
+              "get": "/out/result"
+            },
+            {
+              "get": "/in/value"
+            }
+          ]
+        }
+      },
+      "resource_bounds": {
+        "max_receipt_bytes": 65536,
+        "max_inclusion_proofs": 32,
+        "max_proof_len": 32,
+        "max_predicates": 16,
+        "max_steps": 16,
+        "max_chunk_bytes": 4096,
+        "max_proven_bytes": 65536
+      },
+      "receipt_rule": {
+        "allowed_profiles": [
+          "VTR"
+        ],
+        "profile_params": {
+          "VTR": {
+            "max_assertions": 8
+          }
+        }
+      }
+    },
+    "invocation_header": {
+      "pcs_version": "v1",
+      "contract_id": "sha256:6ace7589cb09e115eb00dabf6768131da8ba2208de269414f6ac1b7a76c76dec",
+      "input_json_qjcs_sha256": "sha256:3c43ce65d068bfe9af5482c431946d6d094eb934f2342186a87188e69411b299",
+      "nonce_b64": "AQEBAQEBAQEBAQEBAQEBAQ=="
+    },
+    "in": {
+      "task": "echo",
+      "value": 7
+    },
+    "out": {
+      "result": 7
+    },
+    "receipt": {
+      "pcs_version": "v1",
+      "receipt_type": "VTR",
+      "contract_id": "sha256:6ace7589cb09e115eb00dabf6768131da8ba2208de269414f6ac1b7a76c76dec",
+      "skill_id": "demo.echo",
+      "invocation_id": "sha256:823a0da8a4bc87e42b9d1493f92d31c226b54cc22bfddc45c0cf50ff85d87f56",
+      "out_json_qjcs_sha256": "sha256:435f051d494218f7e0d6d8da8625dfd7996182f821606bcce38aadb84b4eae17",
+      "events": [
+        {
+          "tool": "echo",
+          "ok": true
+        }
+      ],
+      "assertions": [
+        {
+          "at": {
+            "event": 0
+          },
+          "predicate": {
+            "opvm": {
+              "eq": [
+                {
+                  "get": "/event/tool"
+                },
+                {
+                  "const": "echo"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "to_bundle": {
+    "contract": {
+      "pcs_version": "v1",
+      "contract_id": "sha256:6ace7589cb09e115eb00dabf6768131da8ba2208de269414f6ac1b7a76c76dec",
+      "skill_id": "demo.echo",
+      "version": "1.0.0",
+      "ttl_seconds": 86400,
+      "io": {
+        "input": {
+          "mode": "json",
+          "max_bytes": 4096
+        },
+        "output": {
+          "mode": "json",
+          "max_bytes": 4096
+        }
+      },
+      "predicate_vm": {
+        "name": "opvm-v1",
+        "gas_predicate": 5000,
+        "gas_per_byte": 1,
+        "max_depth": 32,
+        "max_ast_nodes": 512,
+        "max_value_bytes": 4096,
+        "int_overflow": "reject"
+      },
+      "canonicalization": {
+        "name": "qjcs-v1",
+        "default_scale10": 6,
+        "tensor_chunk_bytes": 4,
+        "max_scale10": 18
+      },
+      "precondition": {
+        "opvm": {
+          "and": [
+            {
+              "eq": [
+                {
+                  "get": "/in/task"
+                },
+                {
+                  "const": "echo"
+                }
+              ]
+            },
+            {
+              "ge": [
+                {
+                  "get": "/in/value"
+                },
+                {
+                  "const": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "postcondition": {
+        "opvm": {
+          "eq": [
+            {
+              "get": "/out/result"
+            },
+            {
+              "get": "/in/value"
+            }
+          ]
+        }
+      },
+      "resource_bounds": {
+        "max_receipt_bytes": 65536,
+        "max_inclusion_proofs": 32,
+        "max_proof_len": 32,
+        "max_predicates": 16,
+        "max_steps": 16,
+        "max_chunk_bytes": 4096,
+        "max_proven_bytes": 65536
+      },
+      "receipt_rule": {
+        "allowed_profiles": [
+          "VTR"
+        ],
+        "profile_params": {
+          "VTR": {
+            "max_assertions": 8
+          }
+        }
+      }
+    },
+    "invocation_header": {
+      "pcs_version": "v1",
+      "contract_id": "sha256:6ace7589cb09e115eb00dabf6768131da8ba2208de269414f6ac1b7a76c76dec",
+      "input_json_qjcs_sha256": "sha256:f57a3a3e8760fb818db99cda6b485f0626d631dcc901163108fd0a3600d93f9d",
+      "nonce_b64": "BQUFBQUFBQUFBQUFBQUFBQ=="
+    },
+    "in": {
+      "task": "echo",
+      "value": 9
+    },
+    "out": {
+      "result": 9
+    },
+    "receipt": {
+      "pcs_version": "v1",
+      "receipt_type": "VTR",
+      "contract_id": "sha256:6ace7589cb09e115eb00dabf6768131da8ba2208de269414f6ac1b7a76c76dec",
+      "skill_id": "demo.echo",
+      "invocation_id": "sha256:e401766d79d89f8120cc3a01a2492548000e8b0c091a1f9e05a02196d0952737",
+      "out_json_qjcs_sha256": "sha256:44e4e0f95c9634728da3e1b7a9a2d74012f6c5e595802a4d3cc56478c1db1084"
+    }
+  },
+  "glue_receipt": {
+    "pcs_version": "v1",
+    "receipt_type": "GLUE",
+    "from_contract_id": "sha256:6ace7589cb09e115eb00dabf6768131da8ba2208de269414f6ac1b7a76c76dec",
+    "to_contract_id": "sha256:6ace7589cb09e115eb00dabf6768131da8ba2208de269414f6ac1b7a76c76dec",
+    "from_invocation_id": "sha256:823a0da8a4bc87e42b9d1493f92d31c226b54cc22bfddc45c0cf50ff85d87f56",
+    "to_invocation_id": "sha256:e401766d79d89f8120cc3a01a2492548000e8b0c091a1f9e05a02196d0952737",
+    "mapping": [
+      {
+        "from": "/out/result",
+        "to": "/in/value"
+      },
+      {
+        "from": "/in/task",
+        "to": "/in/task"
+      }
+    ],
+    "bridge_assertions": [
+      {
+        "predicate": {
+          "opvm": {
+            "eq": [
+              {
+                "get": "/out/result"
+              },
+              {
+                "const": 7
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "bounds": {
+      "max_receipt_bytes": 4096,
+      "gas_predicate": 5000
+    }
+  }
+}

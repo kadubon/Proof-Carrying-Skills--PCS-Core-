@@ -1,0 +1,25 @@
+{
+  "pcs_version": "v1",
+  "receipt_type": "VTR",
+  "contract_id": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "skill_id": "demo.echo",
+  "invocation_id": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "out_json_qjcs_sha256": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "out_bytes_sha256": "sha256:6666666666666666666666666666666666666666666666666666666666666666",
+  "event_root": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "event_count": 1,
+  "included_events": [
+    {
+      "event_index": 0,
+      "event_qjcs": {
+        "k": "v"
+      },
+      "event_proof": [
+        {
+          "dir": "L",
+          "hash": "sha256:2222222222222222222222222222222222222222222222222222222222222222"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,593 @@
+# Requirements Specification (English)
+
+## MVP for **Proof-Carrying Skills (PCS-Core)**
+
+### “Treat prior inference as reusable assets, verify cheaply, avoid recomputation”
+
+**Document version:** 0.1 (implementation-ready draft)
+**Primary reference:** *Stop Recomputing for AI/LLMs: Proof-Carrying Skills for Compute-Saving Inference Reuse* 
+
+---
+
+## 0) Normative language
+
+This spec uses **MUST / SHOULD / MAY** in the RFC sense for implementable requirements. 
+
+---
+
+## 1) Product objective
+
+Build a minimal, production-oriented **PCS-Core** system that:
+
+1. accepts or rejects skill outputs via a **small deterministic checker**,
+2. verifies compact receipts under explicit caps,
+3. avoids full end-to-end recomputation whenever verification is cheaper.
+
+This is exactly aligned with PCS’s core idea: reduce repeated inference cost (latency/energy/money) by accepting outputs through deterministic verification over anchored evidence. 
+
+---
+
+## 2) Scope (MVP boundary)
+
+### In scope (MUST)
+
+1. **QJCS canonicalization + hashing** (deterministic commitments). 
+2. **OPVM v1** deterministic predicate VM with gas and strict boundedness.  
+3. **VTR receipt verification** (core receipt profile).  
+4. **Invocation binding** (checker-issued header + replay resistance).  
+5. **Trusted wrapper** issuing invocation header, collecting local anchors, and orchestrating checker call.  
+6. **Local contract store** (no distributed assumptions).  
+
+### Out of scope (MVP)
+
+* Distributed registry/discovery/replication. 
+* Standardized BRS/SRR profile formats. 
+* Mandatory Blob/Merkle layer (optional for later phase).  
+
+---
+
+## 3) Roles, trust, and failure philosophy
+
+### 3.1 Roles
+
+* **Caller** (task input, acceptable contract IDs)
+* **Skill provider** (untrusted black-box execution)
+* **Checker** (trusted deterministic verifier)
+* **Wrapper** (trusted anchor measurement + orchestration)
+* **Registry** optional (not trusted for correctness)
+
+This separation is mandatory for no-meta acceptance. 
+
+### 3.2 Trust boundary
+
+The trusted computing base for MVP is:
+
+* checker implementation,
+* wrapper code that supplies exact bytes and local anchors.
+
+Provider outputs and receipts are untrusted inputs.  
+
+### 3.3 Fail-closed posture
+
+Any parse deviation, cap overflow, evidence gap, gas exhaustion, or mismatch MUST reject. 
+
+---
+
+## 4) Threat model and security requirements
+
+MVP MUST defend against:
+
+* forged plausible outputs + fake receipts,
+* replay/substitution across inputs/nonces/contracts,
+* algorithmic complexity DoS via bloated receipts/predicates,
+* floating-point non-determinism in commitments,
+* verifier overload from high-dimensional evidence,
+* overfitted lookup-table pollution (mostly lifecycle/registry layer later). 
+
+Core security properties MUST hold:
+
+* determinism,
+* bounded verification cost,
+* observable-only validation,
+* model-independence (black-box internals),
+* fail-closed semantics,
+* invocation binding. 
+
+---
+
+## 5) System architecture (MVP)
+
+## Components
+
+1. **Wrapper Service**
+
+   * prepares `/in` and locally observed `/out`,
+   * computes input commitment,
+   * issues invocation header (fresh nonce),
+   * invokes skill provider,
+   * sends `{contract, invocation_header, receipt, in, out}` to checker.
+
+2. **Checker Engine (Trusted Core)**
+
+   * strict JSON parsing,
+   * schema validation,
+   * QJCS hashing,
+   * OPVM eval with gas,
+   * VTR verification,
+   * machine-readable reject codes.  
+
+3. **Contract Store (Local)**
+
+   * key: `contract_id`,
+   * load-time profile checks,
+   * immutable versioned contract artifacts.
+
+4. **Audit Log**
+
+   * deterministic decision record,
+   * include invocation_id, reject code, gas used, byte metrics, timestamps.
+
+---
+
+## 6) Data model requirements
+
+## 6.1 Skill Contract (MUST)
+
+Contract MUST include at least:
+
+* `pcs_version`, `contract_id`, `skill_id`, `version`, `ttl_seconds`,
+* `io`,
+* `predicate_vm`,
+* `canonicalization`,
+* `precondition`, `postcondition`,
+* `resource_bounds`,
+* `receipt_rule`.  
+
+`contract_id` MUST be recomputed from canonicalized contract body via domain-separated hash and MUST match stored ID. 
+
+Unknown keys MUST be rejected unless extension policy explicitly allows them. 
+
+## 6.2 Invocation Header (MUST)
+
+Header MUST include:
+
+* `contract_id`,
+* `input_json_qjcs_sha256`,
+* fresh `nonce_b64` (or monotonic-counter bytes). 
+
+`invocation_id = SHA256("PCS-INVOKE" || QJCS(invocation_header))` MUST be recomputed by checker; receipt-bound ID mismatch MUST reject. 
+
+## 6.3 VTR Receipt (MUST)
+
+Required identity bindings:
+
+* `pcs_version`, `receipt_type="VTR"`,
+* `contract_id`, `skill_id`, `invocation_id`. 
+
+Output binding MUST include exactly one commitment:
+
+* `out_bytes_sha256` or
+* `out_json_qjcs_sha256` (depending on contract output mode). Checker MUST recompute and compare against locally observed output. 
+
+---
+
+## 7) Functional requirements (FR)
+
+## FR-001 Strict parser
+
+Checker MUST reject:
+
+* duplicate keys,
+* non-integer JSON numbers,
+* unsupported/unbounded nesting,
+* invalid/non-canonical base64 where applicable.   
+
+## FR-002 QJCS + hash engine
+
+Checker and wrapper MUST implement QJCS v1-compatible canonicalization, with stable deterministic hashing for commitments. Non-integer numeric JSON literals MUST reject. Tagged fixed-point (`qnum`) MUST be supported. 
+
+## FR-003 Profile-capped contract loading
+
+At contract load time, declared bounds MUST be <= deployment profile maxima, else reject contract. 
+
+## FR-004 OPVM v1 evaluator
+
+MVP MUST implement:
+
+* terminal ops `const/get`,
+* boolean/comparison/int arithmetic/hash/collection/control operators,
+* bounded iteration (`all/any/count_true/in`) with explicit limits,
+* strict type checking + null propagation semantics,
+* deterministic gas metering and hard exhaustion reject.  
+
+## FR-005 Environment construction
+
+Checker MUST build reserved namespaces `/inv`, `/in`, `/out`, `/obs`, `/trace`, `/receipt`, `/event`, `/vars` exactly as specified by evaluation mode and evidence availability. Unproven fields MUST resolve to unknown (`null`) and fail closed when predicates require `true`.  
+
+## FR-006 VTR verification algorithm
+
+Checker MUST implement deterministic ordered verification steps (parse, contract load, invocation binding, output binding, evidence processing, env build, predicate/assertion eval, bound enforcement). 
+
+## FR-007 Reject-code API
+
+Checker MUST emit machine-readable rejection enums from a fixed, versioned set (`SCHEMA_ERROR`, `HASH_MISMATCH`, `GAS_EXHAUSTED`, etc.). 
+
+## FR-008 Local lifecycle hooks
+
+MVP MAY store `ttl_seconds` and advisory coverage policy but MUST NOT rely on registry for correctness decisions.  
+
+---
+
+## 8) Non-functional requirements (NFR)
+
+## NFR-001 Determinism
+
+Given same bytes + same deployment profile, checker decision MUST be bit-reproducible.
+
+## NFR-002 Bounded resource usage
+
+All parse/eval/proof processing must respect caps. No unbounded loops, recursion, search, or dynamic code execution.  
+
+## NFR-003 Security hygiene
+
+Algorithmic complexity defenses MUST be present: strict parsing, load-time cap checks, gas limits, proof/counter caps. 
+
+## NFR-004 Observability
+
+System MUST emit structured logs for:
+
+* invocation_id,
+* contract_id,
+* accept/reject,
+* rejection code,
+* gas consumption,
+* bytes processed,
+* verification latency.
+
+## NFR-005 Portability
+
+Contracts and receipts validated by JSON Schema Draft 2020-12 plus mandatory semantic checks not expressible in schema. 
+
+---
+
+## 9) Deployment profile (proposed starter values for MVP)
+
+These are implementation choices (not mandated constants in the paper), tuned for a first robust prototype:
+
+* `max_contract_bytes`: 128 KiB
+* `max_invocation_header_bytes`: 16 KiB
+* `max_receipt_bytes`: 512 KiB
+* `max_depth`: 32
+* `max_ast_nodes`: 2,000
+* `gas_predicate`: 1,500,000
+* `gas_per_byte`: 1
+* `max_steps`: 500
+* `max_predicates`: 256
+* `max_inclusion_proofs`: 0 (Blob off in MVP)
+* `max_proof_len`: 0 (Blob off in MVP)
+* `max_chunk_bytes`: 0 (Blob off in MVP)
+* `max_proven_bytes`: 0 (Blob off in MVP)
+
+Rationale: keep v1 operationally tight; enable Blob layer only when receipts exceed cap or hashing cost starts approaching runtime savings.
+
+---
+
+## 10) API requirements (MVP)
+
+## 10.1 `PUT /contracts/{contract_id}`
+
+* Validates schema + semantic checks + profile caps.
+* Recomputes `contract_id`.
+* Stores immutable contract or rejects.
+
+## 10.2 `POST /invoke`
+
+Request:
+
+* `contract_id`
+* `input_json`
+* `provider_endpoint`
+* optional local `obs` anchors
+
+Behavior:
+
+* wrapper computes input commitment,
+* wrapper issues invocation header,
+* provider run,
+* checker verify,
+* returns `{decision, output_if_accept, rejection_code_if_reject, invocation_id}`.
+
+## 10.3 `POST /verify`
+
+Offline verification endpoint for pre-collected `(contract, invocation_header, in/out, receipt)` bundles.
+
+## 10.4 `GET /audit/{invocation_id}`
+
+Returns immutable decision artifact.
+
+---
+
+## 11) Acceptance and rejection policy
+
+A call is **ACCEPT** iff all below are true:
+
+1. contract valid and bounded under deployment profile,
+2. invocation binding valid,
+3. output commitment matches local output,
+4. precondition evaluates `true`,
+5. postcondition evaluates `true`,
+6. all assertions (if present) evaluate `true`,
+7. no cap violations or parser/type/gas errors.
+
+Else **REJECT** with explicit code.  
+
+---
+
+## 12) Test requirements
+
+## 12.1 Determinism test suite (MUST)
+
+* Same vector on Linux/macOS/Windows runners -> identical ACCEPT/REJECT + code + hashes.
+
+## 12.2 Negative security tests (MUST)
+
+* duplicate-key JSON,
+* non-canonical base64,
+* replayed receipt with changed nonce/input,
+* gas exhaustion crafted AST,
+* bound overflow on receipt size/steps.
+
+## 12.3 Property tests (SHOULD)
+
+* pointer resolution and null propagation,
+* arithmetic overflow modes (`reject` vs `saturate`),
+* strict unknown-key rejection.
+
+## 12.4 Conformance vectors (MUST)
+
+Maintain golden JSON vectors:
+
+* valid contract/invalid contract,
+* valid invocation/mismatched invocation_id,
+* valid VTR/invalid output hash,
+* precondition/postcondition fail scenarios.
+
+---
+
+## 13) Cost and success metrics
+
+PCS value exists only if total expected cost beats full recomputation after amortizing certification overhead:
+`E[CostPCS] + Costcert / E[Nreuse] < E[Costfull]`. 
+
+For MVP, track at minimum:
+
+* verification latency p50/p95,
+* acceptance rate,
+* false-accept incidents (target: zero in tested envelope),
+* recomputation avoided ratio,
+* estimated compute saved per accepted reuse.
+
+---
+
+## 14) Milestone plan
+
+## Phase 1 : Checker kernel
+
+* strict parser,
+* QJCS hash,
+* contract load/ID recompute,
+* invocation_id recompute.
+
+## Phase 2 : OPVM + VTR
+
+* full OPVM v1 semantics + gas,
+* VTR algorithm complete,
+* reject codes.
+
+## Phase 3 : Wrapper integration
+
+* provider adaptor,
+* local anchors `/obs`,
+* end-to-end invoke/verify API.
+
+## Phase 4 : Hardening
+
+* adversarial tests,
+* audit logging,
+* benchmark + profile tuning.
+
+---
+
+## 15) “Where advantage comes from” in implementation terms
+
+For your competitive edge, this MVP should optimize **not prediction quality**, but **verification economics** and **operational reliability**:
+
+1. **Cheapest trustworthy acceptance path** (deterministic small checker).
+2. **Strict fail-closed discipline** that keeps downside bounded in adversarial settings.
+3. **High reuse throughput** for repeated patterns (your “skill assets” concept).
+4. **Fast onboarding of new reusable skills** through contracts + receipts, without retraining heavyweight models each time.
+
+In plain terms: you are engineering asymmetry by making correctness checks cheap and repeatable, not by claiming perfect foresight.
+
+---
+
+## 16) Governance and profile-update requirements
+
+### 16.1 Governance channel (MUST)
+
+Deployment-profile and policy updates MUST be published as immutable governance events with at least:
+
+* `governance_event_id`
+* `seq_no`
+* `prev_event_sha256`
+* `published_at`
+* `effective_at`
+* `profile_id`
+* `profile_patch`
+* `signer_set_id`
+* `signatures`
+
+Checker/wrapper MUST reject any update that fails schema, signature, or chain validation.
+
+### 16.2 Governance security invariants (MUST)
+
+* Threshold authentication (`k-of-n`) for accepted updates.
+* Anti-rollback: `seq_no` and effective time MUST be monotonic.
+* Hash-chain continuity via `prev_event_sha256`.
+* Deterministic fork-choice rule when multiple candidates exist at the same `seq_no`.
+
+### 16.3 Activation and rollback policy (MUST)
+
+Profile updates MUST use two phases:
+
+1. `shadow` (evaluate but do not enforce),
+2. `active` (enforced for accept/reject decisions).
+
+A rollback event MUST be allowed and MUST itself satisfy the same governance validation rules.
+
+### 16.4 Audit binding (MUST)
+
+Every decision artifact MUST include:
+
+* `profile_id`
+* `governance_event_id`
+* `checker_build_id`
+
+This makes historical decisions replayable under the exact rule set.
+
+---
+
+## 17) Invocation replay defense and idempotency requirements
+
+### 17.1 Nonce and invocation uniqueness (MUST)
+
+Wrapper MUST generate cryptographically strong nonces (recommended: >=128 bits entropy) and MUST prevent reuse for the same `contract_id` within the configured replay window.
+
+### 17.2 Replay window store (MUST)
+
+System MUST persist replay-protection state for at least `replay_window_seconds` (deployment profile value).  
+State MUST survive process restart.
+
+### 17.3 Idempotent duplicate handling (MUST)
+
+If a duplicate request arrives with identical bytes for `(contract, invocation_header, in, out, receipt)`, the system MUST return the same decision/idempotent result.  
+If `invocation_id` collides but bytes differ, system MUST reject with a dedicated replay-conflict code.
+
+---
+
+## 18) API security and abuse-control requirements
+
+### 18.1 Authentication and authorization (MUST)
+
+`PUT /contracts/{contract_id}`, `POST /invoke`, and `POST /verify` MUST require authenticated caller identity.  
+Authorization policy MUST distinguish at least:
+
+* contract publishers,
+* invokers/verifiers,
+* read-only audit consumers.
+
+### 18.2 Rate limits and quotas (MUST)
+
+System MUST enforce per-caller rate limits and byte quotas for contract upload, invoke, and verify endpoints.
+
+### 18.3 Input hardening (MUST)
+
+Request byte-size caps MUST be enforced before full parsing.  
+Malformed or oversized requests MUST fail closed with explicit rejection codes.
+
+### 18.4 Transport and audit identity (MUST)
+
+Production deployment MUST use authenticated transport (for example TLS with service identity validation).  
+Audit records MUST include `caller_id` (or equivalent principal identifier).
+
+---
+
+## 19) PCS-Registry lifecycle and anti-pollution requirements (when registry layer is enabled)
+
+### 19.1 Lifecycle states (MUST)
+
+Registry MUST manage at least: `CANDIDATE`, `PROVISIONAL`, `CERTIFIED`, `DEPRECATED`.
+
+### 19.2 Promotion criteria (MUST)
+
+Promotion to `CERTIFIED` MUST require:
+
+* coverage-challenge pass under contract-declared `coverage_policy`,
+* observed failure rate <= configured threshold,
+* no critical security incidents in current certification window.
+
+### 19.3 Demotion and recertification (MUST)
+
+On `ttl_seconds` expiry, skill MUST be recertified or demoted by policy.  
+Registry MUST support emergency demotion on verified integrity failures.
+
+### 19.4 Deduplication and provenance (MUST)
+
+`contract_id` MUST be the primary deduplication key.  
+Registry history MUST retain immutable provenance of promotions/demotions with timestamped reasons.
+
+---
+
+## 20) Blob/Merkle activation requirements (MVP+1)
+
+### 20.1 Default stance (MUST)
+
+PCS-Core deployments MUST keep Blob/Merkle disabled by default (`max_inclusion_proofs=0`, `max_proof_len=0`, `max_chunk_bytes=0`, `max_proven_bytes=0`).
+
+### 20.2 Enablement gate (SHOULD)
+
+Enable PCS-Blob only when workload evidence shows deterministic verifier economics benefit, such as:
+
+* full-object hashing cost materially impacts end-to-end latency, or
+* artifact sizes routinely approach receipt/profile caps.
+
+### 20.3 Conformance before activation (MUST)
+
+Before enabling Blob/Merkle in production, deployment MUST add:
+
+* Merkle proof validity/invalidity vectors,
+* chunk-bound overflow tests,
+* replay and bound tests with partial proofs.
+
+---
+
+## 21) GitHub publication and reproducibility requirements
+
+### 21.1 Repository minimum contents (MUST)
+
+Public repository MUST include at least:
+
+* `spec/` (normative specification documents)
+* `schemas/` (JSON Schema bundle and versioned artifacts)
+* `test-vectors/` (golden accept/reject vectors)
+* `reference-checker/` (deterministic reference implementation)
+* `wrapper/` (trusted wrapper reference)
+* `SECURITY.md`
+* `LICENSE`
+* `CONTRIBUTING.md`
+* `CHANGELOG.md`
+
+### 21.2 CI reproducibility gate (MUST)
+
+CI MUST run conformance vectors on Linux/macOS/Windows and enforce identical decision outputs and hashes for shared vectors.
+
+### 21.3 Release integrity (MUST)
+
+Each release MUST publish immutable artifact digests (at minimum SHA-256) for:
+
+* checker binaries or containers,
+* schema bundle,
+* conformance vector bundle.
+
+---
+
+## 22) Specification text quality requirements
+
+### 22.1 Encoding and formatting (MUST)
+
+Normative spec files MUST be UTF-8 and MUST avoid ambiguous typographic substitutions that break portability or parsing.
+
+### 22.2 Terminology stability (SHOULD)
+
+Normative field names, reject codes, and API names SHOULD be maintained in a versioned glossary to prevent drift across code, docs, and test vectors.
+

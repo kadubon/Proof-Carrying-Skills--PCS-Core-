@@ -1,0 +1,23 @@
+{
+  "pcs_version": "v1",
+  "receipt_type": "GLUE",
+  "from_contract_id": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "to_contract_id": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "from_invocation_id": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "to_invocation_id": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "mapping": [
+    {
+      "from": "/trace/events/0/tool",
+      "to": "/in/tool"
+    }
+  ],
+  "bridge_assertions": [
+    {
+      "predicate": {
+        "opvm": {
+          "const": true
+        }
+      }
+    }
+  ]
+}

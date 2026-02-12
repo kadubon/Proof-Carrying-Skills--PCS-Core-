@@ -1,0 +1,621 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/pcs-core-v1-bundle.schema.json",
+  "title": "PCS-Core v1 Bundle (with VTR evidence)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "invocation_header",
+    "in",
+    "out",
+    "receipt"
+  ],
+  "properties": {
+    "contract": {
+      "$ref": "#/$defs/skillContract"
+    },
+    "invocation_header": {
+      "$ref": "#/$defs/invocationHeader"
+    },
+    "in": {},
+    "out": {},
+    "receipt": {
+      "$ref": "#/$defs/vtrReceipt"
+    },
+    "obs": {
+      "type": "object"
+    },
+    "out_bytes_b64": {
+      "$ref": "#/$defs/base64String"
+    }
+  },
+  "$defs": {
+    "sha256String": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "base64String": {
+      "type": "string",
+      "pattern": "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+    },
+    "i64": {
+      "type": "integer",
+      "minimum": -9223372036854775808,
+      "maximum": 9223372036854775807
+    },
+    "nonNegI64": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/i64"
+        },
+        {
+          "minimum": 0
+        }
+      ]
+    },
+    "posI64": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/i64"
+        },
+        {
+          "minimum": 1
+        }
+      ]
+    },
+    "predicateObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "opvm"
+      ],
+      "properties": {
+        "opvm": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 1
+        }
+      }
+    },
+    "invocationHeader": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "pcs_version",
+        "contract_id",
+        "input_json_qjcs_sha256",
+        "nonce_b64"
+      ],
+      "properties": {
+        "pcs_version": {
+          "const": "v1"
+        },
+        "contract_id": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "input_json_qjcs_sha256": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "nonce_b64": {
+          "$ref": "#/$defs/base64String"
+        }
+      },
+      "patternProperties": {
+        ".*_b64$": {
+          "$ref": "#/$defs/base64String"
+        }
+      }
+    },
+    "skillContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pcs_version",
+        "contract_id",
+        "skill_id",
+        "version",
+        "ttl_seconds",
+        "io",
+        "predicate_vm",
+        "canonicalization",
+        "precondition",
+        "postcondition",
+        "resource_bounds",
+        "receipt_rule"
+      ],
+      "properties": {
+        "pcs_version": {
+          "const": "v1"
+        },
+        "contract_id": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "skill_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ttl_seconds": {
+          "$ref": "#/$defs/posI64"
+        },
+        "io": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "input",
+            "output"
+          ],
+          "properties": {
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "mode",
+                "max_bytes"
+              ],
+              "properties": {
+                "mode": {
+                  "const": "json"
+                },
+                "max_bytes": {
+                  "$ref": "#/$defs/posI64"
+                }
+              }
+            },
+            "output": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "mode",
+                "max_bytes"
+              ],
+              "properties": {
+                "mode": {
+                  "enum": [
+                    "json",
+                    "bytes"
+                  ]
+                },
+                "max_bytes": {
+                  "$ref": "#/$defs/posI64"
+                }
+              }
+            }
+          }
+        },
+        "predicate_vm": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "gas_predicate",
+            "gas_per_byte",
+            "max_depth",
+            "max_ast_nodes",
+            "max_value_bytes",
+            "int_overflow"
+          ],
+          "properties": {
+            "name": {
+              "const": "opvm-v1"
+            },
+            "gas_predicate": {
+              "$ref": "#/$defs/posI64"
+            },
+            "gas_per_byte": {
+              "$ref": "#/$defs/posI64"
+            },
+            "max_depth": {
+              "$ref": "#/$defs/posI64"
+            },
+            "max_ast_nodes": {
+              "$ref": "#/$defs/posI64"
+            },
+            "max_value_bytes": {
+              "$ref": "#/$defs/posI64"
+            },
+            "int_overflow": {
+              "enum": [
+                "reject",
+                "saturate"
+              ]
+            }
+          }
+        },
+        "canonicalization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "default_scale10",
+            "tensor_chunk_bytes",
+            "max_scale10"
+          ],
+          "properties": {
+            "name": {
+              "const": "qjcs-v1"
+            },
+            "default_scale10": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18
+            },
+            "tensor_chunk_bytes": {
+              "$ref": "#/$defs/posI64"
+            },
+            "max_scale10": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18
+            }
+          }
+        },
+        "precondition": {
+          "$ref": "#/$defs/predicateObject"
+        },
+        "postcondition": {
+          "$ref": "#/$defs/predicateObject"
+        },
+        "resource_bounds": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "max_receipt_bytes",
+            "max_inclusion_proofs",
+            "max_proof_len",
+            "max_predicates",
+            "max_steps",
+            "max_chunk_bytes",
+            "max_proven_bytes"
+          ],
+          "properties": {
+            "max_receipt_bytes": {
+              "$ref": "#/$defs/posI64"
+            },
+            "max_inclusion_proofs": {
+              "$ref": "#/$defs/nonNegI64"
+            },
+            "max_proof_len": {
+              "$ref": "#/$defs/nonNegI64"
+            },
+            "max_predicates": {
+              "$ref": "#/$defs/posI64"
+            },
+            "max_steps": {
+              "$ref": "#/$defs/nonNegI64"
+            },
+            "max_chunk_bytes": {
+              "$ref": "#/$defs/posI64"
+            },
+            "max_proven_bytes": {
+              "$ref": "#/$defs/nonNegI64"
+            }
+          }
+        },
+        "receipt_rule": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "allowed_profiles",
+            "profile_params"
+          ],
+          "properties": {
+            "allowed_profiles": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "VTR",
+                  "BRS",
+                  "SRR"
+                ]
+              }
+            },
+            "profile_params": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "VTR"
+              ],
+              "properties": {
+                "VTR": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "max_assertions"
+                  ],
+                  "properties": {
+                    "max_assertions": {
+                      "$ref": "#/$defs/nonNegI64"
+                    }
+                  }
+                },
+                "BRS": {
+                  "type": "object"
+                },
+                "SRR": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "coverage_policy": {
+          "type": "object"
+        },
+        "failure_modes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "extensions": {
+          "type": "object"
+        }
+      }
+    },
+    "merkleProofItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dir",
+        "hash"
+      ],
+      "properties": {
+        "dir": {
+          "enum": [
+            "L",
+            "R"
+          ]
+        },
+        "hash": {
+          "$ref": "#/$defs/sha256String"
+        }
+      }
+    },
+    "merkleProof": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/merkleProofItem"
+      }
+    },
+    "includedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_index",
+        "event_qjcs",
+        "event_proof"
+      ],
+      "properties": {
+        "event_index": {
+          "$ref": "#/$defs/nonNegI64"
+        },
+        "event_qjcs": {
+          "type": "object"
+        },
+        "event_proof": {
+          "$ref": "#/$defs/merkleProof"
+        }
+      }
+    },
+    "includedChunk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "blob_root",
+        "blob_n_chunks",
+        "chunk_index",
+        "chunk_bytes_b64",
+        "chunk_proof"
+      ],
+      "properties": {
+        "blob_root": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "blob_n_chunks": {
+          "$ref": "#/$defs/posI64"
+        },
+        "chunk_index": {
+          "$ref": "#/$defs/nonNegI64"
+        },
+        "chunk_bytes_b64": {
+          "$ref": "#/$defs/base64String"
+        },
+        "chunk_proof": {
+          "$ref": "#/$defs/merkleProof"
+        }
+      }
+    },
+    "vtrAssertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "at",
+        "predicate"
+      ],
+      "properties": {
+        "at": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "event"
+          ],
+          "properties": {
+            "event": {
+              "$ref": "#/$defs/nonNegI64"
+            }
+          }
+        },
+        "predicate": {
+          "$ref": "#/$defs/predicateObject"
+        }
+      }
+    },
+    "vtrReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pcs_version",
+        "receipt_type",
+        "contract_id",
+        "skill_id",
+        "invocation_id"
+      ],
+      "properties": {
+        "pcs_version": {
+          "const": "v1"
+        },
+        "receipt_type": {
+          "const": "VTR"
+        },
+        "contract_id": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "skill_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "invocation_id": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "out_json_qjcs_sha256": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "out_bytes_sha256": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "event_root": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "event_count": {
+          "$ref": "#/$defs/nonNegI64"
+        },
+        "included_events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/includedEvent"
+          }
+        },
+        "included_chunks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/includedChunk"
+          }
+        },
+        "assertions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/vtrAssertion"
+          }
+        },
+        "extensions": {
+          "type": "object"
+        }
+      },
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "required": [
+                "out_json_qjcs_sha256"
+              ],
+              "not": {
+                "required": [
+                  "out_bytes_sha256"
+                ]
+              }
+            },
+            {
+              "required": [
+                "out_bytes_sha256"
+              ],
+              "not": {
+                "required": [
+                  "out_json_qjcs_sha256"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "oneOf": [
+            {
+              "required": [
+                "events"
+              ],
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "event_root"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "event_count"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "included_events"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "required": [
+                "event_root",
+                "event_count",
+                "included_events"
+              ],
+              "not": {
+                "required": [
+                  "events"
+                ]
+              }
+            },
+            {
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "events"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "event_root"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "event_count"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "included_events"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/pcs-v1-extensions-placeholder.schema.json",
+  "title": "PCS v1 Extensions (GLUE / PCS-Blob)",
+  "description": "Operational schema layer for GLUE receipts, VTR Merkle/blob evidence, and composition bundles.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/glueReceipt"
+    },
+    {
+      "$ref": "#/$defs/vtrBlobReceipt"
+    },
+    {
+      "$ref": "#/$defs/compositionBundle"
+    }
+  ],
+  "$defs": {
+    "sha256String": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "base64String": {
+      "type": "string",
+      "pattern": "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+    },
+    "i64": {
+      "type": "integer",
+      "minimum": -9223372036854775808,
+      "maximum": 9223372036854775807
+    },
+    "nonNegI64": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/i64"
+        },
+        {
+          "minimum": 0
+        }
+      ]
+    },
+    "posI64": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/i64"
+        },
+        {
+          "minimum": 1
+        }
+      ]
+    },
+    "restrictedJsonPointer": {
+      "type": "string",
+      "pattern": "^(/[A-Za-z0-9_-]+)+$"
+    },
+    "toInPointer": {
+      "type": "string",
+      "pattern": "^/in(/[A-Za-z0-9_-]+)+$"
+    },
+    "opvmExpr": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1
+    },
+    "opvmProgram": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "opvm"
+      ],
+      "properties": {
+        "opvm": {
+          "$ref": "#/$defs/opvmExpr"
+        }
+      }
+    },
+    "extensionsObject": {
+      "type": "object"
+    },
+    "merkleProofItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dir",
+        "hash"
+      ],
+      "properties": {
+        "dir": {
+          "enum": [
+            "L",
+            "R"
+          ]
+        },
+        "hash": {
+          "$ref": "#/$defs/sha256String"
+        }
+      }
+    },
+    "merkleProof": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/merkleProofItem"
+      }
+    },
+    "includedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_index",
+        "event_qjcs",
+        "event_proof"
+      ],
+      "properties": {
+        "event_index": {
+          "$ref": "#/$defs/nonNegI64"
+        },
+        "event_qjcs": {
+          "type": "object"
+        },
+        "event_proof": {
+          "$ref": "#/$defs/merkleProof"
+        }
+      }
+    },
+    "includedChunk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "blob_root",
+        "blob_n_chunks",
+        "chunk_index",
+        "chunk_bytes_b64",
+        "chunk_proof"
+      ],
+      "properties": {
+        "blob_root": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "blob_n_chunks": {
+          "$ref": "#/$defs/posI64"
+        },
+        "chunk_index": {
+          "$ref": "#/$defs/nonNegI64"
+        },
+        "chunk_bytes_b64": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/base64String"
+            },
+            {
+              "minLength": 4
+            }
+          ]
+        },
+        "chunk_proof": {
+          "$ref": "#/$defs/merkleProof"
+        }
+      }
+    },
+    "glueMappingItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from",
+        "to"
+      ],
+      "properties": {
+        "from": {
+          "$ref": "#/$defs/restrictedJsonPointer"
+        },
+        "to": {
+          "$ref": "#/$defs/toInPointer"
+        }
+      }
+    },
+    "glueBridgeAssertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "predicate"
+      ],
+      "properties": {
+        "predicate": {
+          "$ref": "#/$defs/opvmProgram"
+        }
+      }
+    },
+    "glueBounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_receipt_bytes",
+        "gas_predicate"
+      ],
+      "properties": {
+        "max_receipt_bytes": {
+          "$ref": "#/$defs/posI64"
+        },
+        "gas_predicate": {
+          "$ref": "#/$defs/posI64"
+        }
+      }
+    },
+    "glueReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pcs_version",
+        "receipt_type",
+        "from_contract_id",
+        "to_contract_id",
+        "from_invocation_id",
+        "to_invocation_id",
+        "mapping",
+        "bridge_assertions",
+        "bounds"
+      ],
+      "properties": {
+        "pcs_version": {
+          "const": "v1"
+        },
+        "receipt_type": {
+          "const": "GLUE"
+        },
+        "from_contract_id": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "to_contract_id": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "from_invocation_id": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "to_invocation_id": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "mapping": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/glueMappingItem"
+          }
+        },
+        "bridge_assertions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/glueBridgeAssertion"
+          }
+        },
+        "bounds": {
+          "$ref": "#/$defs/glueBounds"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensionsObject"
+        }
+      }
+    },
+    "vtrBlobReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pcs_version",
+        "receipt_type",
+        "contract_id",
+        "skill_id",
+        "invocation_id",
+        "event_root",
+        "event_count",
+        "included_events"
+      ],
+      "properties": {
+        "pcs_version": {
+          "const": "v1"
+        },
+        "receipt_type": {
+          "const": "VTR"
+        },
+        "contract_id": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "skill_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "invocation_id": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "out_bytes_sha256": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "out_json_qjcs_sha256": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "event_root": {
+          "$ref": "#/$defs/sha256String"
+        },
+        "event_count": {
+          "$ref": "#/$defs/nonNegI64"
+        },
+        "included_events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/includedEvent"
+          }
+        },
+        "included_chunks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/includedChunk"
+          }
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensionsObject"
+        }
+      },
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "required": [
+                "out_bytes_sha256"
+              ],
+              "not": {
+                "required": [
+                  "out_json_qjcs_sha256"
+                ]
+              }
+            },
+            {
+              "required": [
+                "out_json_qjcs_sha256"
+              ],
+              "not": {
+                "required": [
+                  "out_bytes_sha256"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "compositionBundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from_bundle",
+        "to_bundle",
+        "glue_receipt"
+      ],
+      "properties": {
+        "from_bundle": {
+          "$ref": "pcs-core-v1-bundle.schema.json"
+        },
+        "to_bundle": {
+          "$ref": "pcs-core-v1-bundle.schema.json"
+        },
+        "glue_receipt": {
+          "$ref": "#/$defs/glueReceipt"
+        }
+      }
+    }
+  }
+}

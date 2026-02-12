@@ -1,0 +1,27 @@
+{
+  "pcs_version": "v1",
+  "receipt_type": "GLUE",
+  "from_contract_id": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "to_contract_id": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "from_invocation_id": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "to_invocation_id": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "mapping": [
+    {
+      "from": "/trace/events/0/tool",
+      "to": "/out/tool"
+    }
+  ],
+  "bridge_assertions": [
+    {
+      "predicate": {
+        "opvm": {
+          "const": true
+        }
+      }
+    }
+  ],
+  "bounds": {
+    "max_receipt_bytes": 4096,
+    "gas_predicate": 1000
+  }
+}
