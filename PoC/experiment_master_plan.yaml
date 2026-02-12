@@ -1,6 +1,6 @@
-protocol_version: "2.0.0"
-plan_id: "pcs-core-experiment-plan-v2"
-title: "PCS-Core Experimental Validation Plan (Determinism, Fail-Closed Safety, Conformance, and Reproducibility)"
+protocol_version: "2.2.0"
+plan_id: "pcs-core-experiment-plan-v2.2"
+title: "PCS-Core Experimental Validation Plan (Determinism, Fail-Closed Safety, Conformance, Reproducibility, and Optional External Cost Frame)"
 language: "en"
 created_utc: "2026-02-12T00:00:00Z"
 audited_utc: "2026-02-12T00:00:00Z"
@@ -24,13 +24,15 @@ scientific_integrity:
   claim_boundaries:
     - "This plan validates the verification layer (checker/receipts/proofs), not model semantic correctness."
     - "No claims about BRS/SRR runtime semantics are permitted (not implemented)."
-    - "Any compute-savings claim must be explicitly labeled as OPTIONAL unless E6 is executed."
+    - "External cost/latency claims must be executed and reported under E6_OPTIONAL_COST as a separate frame."
+    - "E6 outcomes are optional and non-gating for PCS-Core correctness/safety acceptance."
 
 references:
   primary:
     - "Takahashi, K. (2026). Stop Recomputing for AI/LLMs: Proof-Carrying Skills for Compute-Saving Inference Reuse. Zenodo. https://doi.org/10.5281/zenodo.18490939"
   repository_docs:
     - "README.md"
+    - "PoC/README.md"
     - "spec/rulebook.md"
     - "spec/schema-profile.md"
     - "spec/paper-conformance.md"
@@ -92,7 +94,7 @@ scope:
     - "SRR runtime semantics"
     - "Claims about model quality/correctness"
   optional_scope:
-    - "End-to-end compute/cost savings with external model wrapper harness"
+    - "E6 separate external frame for end-to-end compute/cost/latency effects"
 
 data_and_artifacts:
   vector_roots:
@@ -114,6 +116,8 @@ objectives:
   secondary:
     - "Characterize runtime distribution of verification workload."
     - "Document boundary and limitation behavior transparently."
+  optional_external:
+    - "Estimate whether operational latency/cost improves under measured reuse in a disclosed workload."
 
 metrics:
   deterministic_replay_match_rate:
@@ -132,6 +136,10 @@ metrics:
     summary: ["mean", "median", "p95", "max"]
   verifier_cpu_time_ms:
     summary: ["mean", "median", "p95", "max"]
+  optional_latency_improvement_ratio:
+    definition: "1 - (pcs_total_latency / baseline_total_latency)"
+  optional_cost_improvement_ratio:
+    definition: "1 - (pcs_total_cost / baseline_total_cost)"
 
 hypotheses:
   - id: "H1"
@@ -151,11 +159,11 @@ hypotheses:
     experiment: "E4_BOUNDARY"
     success_condition: "reject_code_match_rate == 1.0"
   - id: "H5"
-    statement: "Optional external cost/latency experiment may show reuse benefit."
+    statement: "If E6 is executed in command mode with full disclosure, measured latency/cost may improve under reuse."
     experiment: "E6_OPTIONAL_COST"
-    success_condition: "reported_as_optional_and_non-gating"
+    success_condition: "optional_frame_reports_claim_readiness_and_non-gating_label"
 
-experiments:
+core_experiments:
   - id: "E0_PROTOCOL_FREEZE"
     goal: "Freeze protocol and environment fingerprint before result collection."
     steps:
@@ -225,17 +233,51 @@ experiments:
     pass_condition:
       vector_pass_rate: 1.0
 
+optional_external_experiments:
   - id: "E6_OPTIONAL_COST"
-    goal: "Optional external experiment for compute/cost/latency reuse effects."
+    frame: "separate_optional_non_gating"
+    goal: "Estimate operational latency/cost effect of reuse with explicit external assumptions."
     enabled_by_default: false
     prerequisites:
       - "external wrapper with reproducible model runtime"
-      - "auditable cost model and power measurement"
-      - "public disclosure of workload construction"
+      - "auditable cost model (unit economics, registry overhead, certification overhead)"
+      - "public disclosure of workload construction and command templates"
+      - "all executed runs retained, including null/negative outcomes"
+    implementation:
+      runner: "python PoC/e6_optional_cost_runner.py --config PoC/e6_optional_cost_config.example.json --out-dir PoC/runs --tag e6_optional_cost"
+      config_template: "PoC/e6_optional_cost_config.example.json"
+      output_guide: "PoC/README.md"
+    required_outputs:
+      - "PoC/runs/e6_optional_cost_campaigns.csv"
+      - "PoC/runs/e6_optional_cost_report.json"
+      - "PoC/runs/e6_optional_cost_report.md"
+      - "PoC/runs/e6_optional_cost_effective_config.json"
+      - "PoC/runs/e6_optional_cost_command_log.jsonl"
+      - "PoC/runs/e6_optional_cost_environment_fingerprint.json"
+    analysis_requirements:
+      - "report latency_improvement_ratio and cost_improvement_ratio"
+      - "report 95% bootstrap CI"
+      - "map cost terms to paper notation (Costrun, Costcheck, Costhash, Costregistry, Costcert/E[Nreuse])"
+      - "separate simulated vs command-mode evidence"
+      - "report claim-readiness criteria and whether all criteria are satisfied"
     non_gating: true
+    design_controls:
+      - "use auditable command templates with campaign/episode/seed placeholders"
+      - "retain command execution log and environment fingerprint"
+      - "randomize baseline vs verify episode order when feasible"
+    claim_thresholds:
+      min_claim_campaigns: 30
+      min_claim_episodes: 100
+    claim_readiness_criteria:
+      - "mode is command"
+      - "workload disclosure complete (workload_id, construction_doc, input_manifest_sha256, harness_version)"
+      - "campaigns_completed >= min_claim_campaigns"
+      - "episodes_per_campaign >= min_claim_episodes"
+      - "95% CI lower bound > 0 for both latency and cost improvements"
     reporting_rule:
       - "Results must be labeled as optional and external to core verifier claims."
       - "Do not claim causal effect of PCS checker alone without controlled design."
+      - "Do not present simulated scenarios as operational proof."
 
 statistics_and_reporting:
   confidence_level: 0.95
@@ -287,6 +329,14 @@ artifact_contract:
       - "e4_boundary_report.json"
     E5_SCHEMA_INTEROP:
       - "e5_schema_results.json"
+  required_by_optional_experiment:
+    E6_OPTIONAL_COST:
+      - "e6_optional_cost_campaigns.csv"
+      - "e6_optional_cost_report.json"
+      - "e6_optional_cost_report.md"
+      - "e6_optional_cost_effective_config.json"
+      - "e6_optional_cost_command_log.jsonl"
+      - "e6_optional_cost_environment_fingerprint.json"
 
 publication_requirements:
   mandatory_outputs:
@@ -326,4 +376,6 @@ release_gates:
 notes:
   - "Safety (false-accept prevention) is a hard gate."
   - "Limitation reporting is mandatory; low or zero gain results must be published as-is."
-  - "Use this plan for verifier-layer claims; external cost claims require E6 and explicit caveats."
+  - "E6_OPTIONAL_COST is a separate optional frame and does not change PCS-Core accept/reject guarantees."
+  - "Use command-mode E6 with full workload disclosure before making operational cost/latency claims."
+  - "Operational claim readiness requires disclosure + sample-size thresholds + positive CI lower bounds."

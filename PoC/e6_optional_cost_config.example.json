@@ -1,0 +1,73 @@
+{
+  "config_version": "2.0.0",
+  "seed": 20260212,
+  "bootstrap_iterations": 5000,
+  "min_claim_campaigns": 30,
+  "min_claim_episodes": 100,
+  "scenarios": [
+    {
+      "id": "demo_simulated_sanity",
+      "enabled": true,
+      "description": "Synthetic sanity check for pipeline validation only.",
+      "mode": "simulated",
+      "campaigns": 40,
+      "episodes_per_campaign": 120,
+      "warmup_runs": 3,
+      "simulation": {
+        "baseline": {
+          "mean_ms": 900.0,
+          "jitter_ms": 80.0
+        },
+        "pcs_run": {
+          "mean_ms": 890.0,
+          "jitter_ms": 80.0
+        },
+        "pcs_verify": {
+          "mean_ms": 28.0,
+          "jitter_ms": 4.0
+        }
+      },
+      "cost_model": {
+        "currency": "USD",
+        "cost_per_ms_baseline": 0.0000022,
+        "cost_per_ms_pcs_run": 0.0000022,
+        "cost_per_ms_pcs_verify": 0.0000010,
+        "cost_hash_per_verify": 0.0000010,
+        "cost_registry_per_campaign": 0.0020,
+        "cost_certification_per_campaign": 0.0040
+      }
+    },
+    {
+      "id": "external_wrapper_template",
+      "enabled": false,
+      "description": "Replace templates and workload disclosure with your production harness for real claims.",
+      "mode": "command",
+      "campaigns": 30,
+      "episodes_per_campaign": 150,
+      "warmup_runs": 3,
+      "workload": {
+        "workload_id": "prod_workload_v1",
+        "construction_doc": "PoC/workloads/prod_workload_v1.md",
+        "input_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "harness_version": "external-harness/1.0.0"
+      },
+      "driver": {
+        "cwd": ".",
+        "timeout_sec": 300,
+        "randomize_episode_order": true,
+        "baseline_command_template": "python external_harness.py --mode baseline --campaign {campaign_idx} --episode {episode_idx} --seed {seed}",
+        "pcs_run_command_template": "python external_harness.py --mode pcs-run --campaign {campaign_idx} --seed {seed}",
+        "pcs_verify_command_template": "python external_harness.py --mode pcs-verify --campaign {campaign_idx} --episode {episode_idx} --seed {seed}"
+      },
+      "cost_model": {
+        "currency": "USD",
+        "cost_per_ms_baseline": 0.0000022,
+        "cost_per_ms_pcs_run": 0.0000022,
+        "cost_per_ms_pcs_verify": 0.0000010,
+        "cost_hash_per_verify": 0.0000010,
+        "cost_registry_per_campaign": 0.0020,
+        "cost_certification_per_campaign": 0.0040
+      }
+    }
+  ]
+}

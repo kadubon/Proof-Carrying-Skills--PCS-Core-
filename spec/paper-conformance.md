@@ -7,7 +7,7 @@ This document tracks repository conformance to the paper and highlights residual
 ## Scope of Check
 
 - paper: *Stop Recomputing for AI/LLMs: Proof-Carrying Skills for Compute-Saving Inference Reuse*
-- focus: OSS publication, specifications, deterministic verifier, vectors/compatibility
+- focus: OSS publication, specifications, deterministic verifier, vectors/compatibility, optional cost frame
 
 ## Conformance Matrix
 
@@ -19,6 +19,7 @@ This document tracks repository conformance to the paper and highlights residual
 | PCS-Blob | domain-separated Merkle inclusion verification for event logs/chunks | Implemented for `included_events` and `included_chunks` in VTR path |
 | GLUE composition | deterministic mapping + bridge assertions + invocation binding | Implemented via composition bundle (`from_bundle`,`to_bundle`,`glue_receipt`) |
 | Test vectors / compatibility suite | replayable vectors with determinism check | `test-vectors/*` + `compatibility-suite/run_vectors.py` (bundle + schema modes) |
+| Optional cost model frame (Section 12 intent) | explicit cost decomposition + amortization + reproducible reporting | Implemented as separate non-gating frame with command logs and environment fingerprint: `PoC/e6_optional_cost_runner.py`, `PoC/e6_optional_cost_config.example.json`, `PoC/experiment_master_plan.yaml` |
 
 ## Strict MUST Checklist
 
@@ -42,7 +43,9 @@ This document tracks repository conformance to the paper and highlights residual
 - Section 8.4 (event logs): implemented in `_process_vtr_evidence` for `event_root`/`event_count`/`included_events` checks.
 - Section 9.1 (VTR profile and deterministic algorithm): implemented in `_verify_vtr_bundle_obj` including output binding, trace mode exclusivity, and assertion evaluation.
 - Section 10.1-10.2 (GLUE composition): implemented in `verify_composition_obj` and `_verify_glue_against_transition` using verified `from_bundle` environment, deterministic mapping, and bridge assertions.
+- Section 12 (cost model framing): operational measurement harness implemented as optional separate frame in `PoC/e6_optional_cost_runner.py`, with equation mapping, amortization reporting, claim-readiness criteria, and audit artifacts (`*_command_log.jsonl`, `*_environment_fingerprint.json`).
 
 ## Residual Gaps
 
 - BRS and SRR runtime semantics are not implemented (schema slots are reserved, runtime behavior intentionally absent).
+- E6 operational claims still require external wrapper command disclosure and workload publication; simulated mode is for pipeline sanity only.
