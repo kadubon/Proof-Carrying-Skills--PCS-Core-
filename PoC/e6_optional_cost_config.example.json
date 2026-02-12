@@ -7,7 +7,7 @@
   "scenarios": [
     {
       "id": "demo_simulated_sanity",
-      "enabled": true,
+      "enabled": false,
       "description": "Synthetic sanity check for pipeline validation only.",
       "mode": "simulated",
       "campaigns": 40,
@@ -29,44 +29,44 @@
       },
       "cost_model": {
         "currency": "USD",
-        "cost_per_ms_baseline": 0.0000022,
-        "cost_per_ms_pcs_run": 0.0000022,
-        "cost_per_ms_pcs_verify": 0.0000010,
-        "cost_hash_per_verify": 0.0000010,
-        "cost_registry_per_campaign": 0.0020,
-        "cost_certification_per_campaign": 0.0040
+        "cost_per_ms_baseline": 2.2e-06,
+        "cost_per_ms_pcs_run": 2.2e-06,
+        "cost_per_ms_pcs_verify": 1e-06,
+        "cost_hash_per_verify": 1e-06,
+        "cost_registry_per_campaign": 0.002,
+        "cost_certification_per_campaign": 0.004
       }
     },
     {
-      "id": "external_wrapper_template",
-      "enabled": false,
-      "description": "Replace templates and workload disclosure with your production harness for real claims.",
+      "id": "operational_wrapper_pilot_v1",
+      "enabled": true,
+      "description": "Command-mode deterministic operational pilot with disclosed workload and reproducible wrapper harness.",
       "mode": "command",
       "campaigns": 30,
-      "episodes_per_campaign": 150,
-      "warmup_runs": 3,
+      "episodes_per_campaign": 100,
+      "warmup_runs": 1,
       "workload": {
-        "workload_id": "prod_workload_v1",
+        "workload_id": "operational_pilot_v1",
         "construction_doc": "PoC/workloads/prod_workload_v1.md",
-        "input_manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "harness_version": "external-harness/1.0.0"
+        "input_manifest_sha256": "57fa9927da01394a62ebd42bb6330ee6a721f2a168a202f25af0cf3cbac627c1",
+        "harness_version": "PoC/operational_harness.py@v1"
       },
       "driver": {
         "cwd": ".",
-        "timeout_sec": 300,
+        "timeout_sec": 120,
         "randomize_episode_order": true,
-        "baseline_command_template": "python external_harness.py --mode baseline --campaign {campaign_idx} --episode {episode_idx} --seed {seed}",
-        "pcs_run_command_template": "python external_harness.py --mode pcs-run --campaign {campaign_idx} --seed {seed}",
-        "pcs_verify_command_template": "python external_harness.py --mode pcs-verify --campaign {campaign_idx} --episode {episode_idx} --seed {seed}"
+        "baseline_command_template": "python PoC/operational_harness.py --mode baseline --campaign {campaign_idx} --episode {episode_idx} --seed {seed} --manifest PoC/workloads/operational_input_manifest.json --cache-dir PoC/runs/operational_cache --baseline-iterations 60000 --run-iterations 60000 --verify-iterations 1000",
+        "pcs_run_command_template": "python PoC/operational_harness.py --mode pcs-run --campaign {campaign_idx} --seed {seed} --manifest PoC/workloads/operational_input_manifest.json --cache-dir PoC/runs/operational_cache --baseline-iterations 60000 --run-iterations 60000 --verify-iterations 1000",
+        "pcs_verify_command_template": "python PoC/operational_harness.py --mode pcs-verify --campaign {campaign_idx} --episode {episode_idx} --seed {seed} --manifest PoC/workloads/operational_input_manifest.json --cache-dir PoC/runs/operational_cache --baseline-iterations 60000 --run-iterations 60000 --verify-iterations 1000"
       },
       "cost_model": {
         "currency": "USD",
-        "cost_per_ms_baseline": 0.0000022,
-        "cost_per_ms_pcs_run": 0.0000022,
-        "cost_per_ms_pcs_verify": 0.0000010,
-        "cost_hash_per_verify": 0.0000010,
-        "cost_registry_per_campaign": 0.0020,
-        "cost_certification_per_campaign": 0.0040
+        "cost_per_ms_baseline": 2.2e-06,
+        "cost_per_ms_pcs_run": 2.2e-06,
+        "cost_per_ms_pcs_verify": 1e-06,
+        "cost_hash_per_verify": 1e-06,
+        "cost_registry_per_campaign": 0.002,
+        "cost_certification_per_campaign": 0.004
       }
     }
   ]

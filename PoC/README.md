@@ -41,6 +41,10 @@ Workload disclosure template: `PoC/workloads/prod_workload_v1.md`
 
 Default thresholds in example config: `min_claim_campaigns=30`, `min_claim_episodes=100`.
 
+Operational pilot harness in this repository:
+- `PoC/operational_harness.py`
+- `PoC/workloads/operational_input_manifest.json`
+
 
 - Provide workload disclosure metadata in config:
   - `workload_id`

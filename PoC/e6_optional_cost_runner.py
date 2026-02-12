@@ -362,10 +362,12 @@ def _measure_phase(
     _require(cwd.exists(), f"{scenario_id}: driver.cwd does not exist: {cwd}")
 
     template = _resolve_command_template(driver, phase)
+    render_campaign_idx = campaign_idx if campaign_idx >= 0 else 0
+    render_episode_idx = episode_idx if episode_idx >= 0 else 0
     context = {
         "scenario_id": scenario_id,
-        "campaign_idx": campaign_idx,
-        "episode_idx": episode_idx,
+        "campaign_idx": render_campaign_idx,
+        "episode_idx": render_episode_idx,
         "seed": seed,
         "phase": phase,
     }
@@ -638,7 +640,6 @@ def main() -> int:
                 )
 
                 for episode_idx in range(episodes):
-                    pair_seed = master_seed + (s_idx * 1_000_000) + (campaign_idx * 10_000) + episode_idx
                     phases = ["baseline", "pcs_verify"]
                     if randomize_order:
                         rng.shuffle(phases)
@@ -649,7 +650,7 @@ def main() -> int:
                             scenario_id,
                             campaign_idx,
                             episode_idx,
-                            pair_seed,
+                            campaign_seed,
                             rng,
                             workspace,
                             command_log,

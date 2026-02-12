@@ -1,0 +1,96 @@
+{
+  "generated_utc": "2026-02-12T23:20:07Z",
+  "plan_protocol_version": "2.2.0",
+  "core_experiments": {
+    "E1_CONFORMANCE": {
+      "passed": true,
+      "total": 40,
+      "failed": 0,
+      "bundle_pass": 33,
+      "schema_pass": 7
+    },
+    "E2_DETERMINISM": {
+      "passed": true,
+      "evidence": "compatibility-suite executes each vector twice"
+    },
+    "E3_FAIL_CLOSED": {
+      "passed": true,
+      "reject_bundle_pass_count": 28
+    },
+    "E4_BOUNDARY": {
+      "passed": true,
+      "missing_cases": []
+    },
+    "E5_SCHEMA_INTEROP": {
+      "passed": true,
+      "schema_pass_count": 7
+    }
+  },
+  "optional_experiments": {
+    "E6_OPTIONAL_COST": {
+      "failed_scenarios": [],
+      "scenarios": [
+        {
+          "id": "operational_wrapper_pilot_v1",
+          "mode": "command",
+          "status": "ok",
+          "supports_operational_claim": true,
+          "campaigns_completed": 30,
+          "campaigns_planned": 30,
+          "episodes_per_campaign": 100,
+          "latency_improvement_ratio_mean": 0.19524001510606973,
+          "latency_improvement_ratio_ci95": [
+            0.19287664363424126,
+            0.1974266750661866
+          ],
+          "cost_improvement_ratio_mean": 0.3885002811287983,
+          "cost_improvement_ratio_ci95": [
+            0.3865142713780337,
+            0.39110714757760356
+          ],
+          "claim_criteria": {
+            "cost_ci_lower_positive": true,
+            "latency_ci_lower_positive": true,
+            "minimum_campaigns_met": true,
+            "minimum_episodes_met": true,
+            "mode_is_command": true,
+            "scenario_status_ok": true,
+            "workload_disclosure_complete": true
+          },
+          "workload": {
+            "construction_doc": "PoC/workloads/prod_workload_v1.md",
+            "harness_version": "PoC/operational_harness.py@v1",
+            "input_manifest_sha256": "57fa9927da01394a62ebd42bb6330ee6a721f2a168a202f25af0cf3cbac627c1",
+            "workload_id": "operational_pilot_v1"
+          },
+          "error": null
+        }
+      ]
+    }
+  },
+  "operational_claim": {
+    "ready": true,
+    "statement": "Operational claim is supported for the disclosed command-mode workload and measured environment.",
+    "scope_limitations": [
+      "Applies to the disclosed workload and harness configuration only.",
+      "Does not imply universal improvement across all production models/workloads.",
+      "PCS-Core correctness/safety claims remain independently gated by E1-E5."
+    ]
+  },
+  "artifacts": {
+    "e1_log": "PoC/runs/e1_conformance.log",
+    "e1_summary": "PoC/runs/e1_summary.json",
+    "e6_report_json": "PoC/runs/e6_optional_cost_report.json",
+    "e6_report_md": "PoC/runs/e6_optional_cost_report.md",
+    "e6_campaign_csv": "PoC/runs/e6_optional_cost_campaigns.csv",
+    "e6_command_log": "PoC/runs/e6_optional_cost_command_log.jsonl",
+    "e6_environment": "PoC/runs/e6_optional_cost_environment_fingerprint.json",
+    "workload_disclosure": "PoC/workloads/prod_workload_v1.md",
+    "workload_manifest": "PoC/workloads/operational_input_manifest.json"
+  },
+  "scientific_integrity_notes": [
+    "All executed runs are retained in artifacts (including command logs).",
+    "E6 is reported as optional/non-gating and separated from PCS-Core correctness claims.",
+    "Interpretation is limited to measured evidence and declared workload scope."
+  ]
+}
