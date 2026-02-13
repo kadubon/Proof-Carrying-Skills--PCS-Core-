@@ -7,6 +7,7 @@ import random
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Callable
 
 try:
@@ -78,6 +79,30 @@ def _resolve_api_key(gemini_cfg: dict[str, Any]) -> tuple[str | None, str | None
         value = os.environ.get(env_name)
         if value:
             return value, env_name
+
+    # Fallback to local env files for operational convenience.
+    env_files = [Path("PoC2/.env"), Path(".env")]
+    for env_file in env_files:
+        if not env_file.exists():
+            continue
+        try:
+            text = env_file.read_text(encoding="utf-8", errors="ignore")
+        except Exception:
+            continue
+        kv: dict[str, str] = {}
+        for line in text.splitlines():
+            raw = line.strip()
+            if not raw or raw.startswith("#") or "=" not in raw:
+                continue
+            k, v = raw.split("=", 1)
+            key = k.strip()
+            val = v.strip().strip('"').strip("'")
+            if key and val:
+                kv[key] = val
+        for env_name in ordered:
+            value = kv.get(env_name)
+            if value:
+                return value, f"{env_name}@{env_file.as_posix()}"
     return None, None
 
 
@@ -163,8 +188,10 @@ class GeminiWorkloadDriver:
             )
             return
         try:
+            # google-genai HttpOptions timeout unit is milliseconds.
+            timeout_ms = max(1, int(self.timeout_seconds) * 1000)
             http_options = genai_types.HttpOptions(
-                timeout=self.timeout_seconds,
+                timeout=timeout_ms,
                 retry_options=genai_types.HttpRetryOptions(attempts=1),
             )
             self._client = genai.Client(api_key=self.api_key, http_options=http_options)

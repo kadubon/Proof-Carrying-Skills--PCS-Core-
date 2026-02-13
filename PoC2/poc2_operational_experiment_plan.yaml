@@ -5,6 +5,8 @@ language: "en"
 created_utc: "2026-02-13T00:00:00Z"
 owner: "research-team"
 status: "draft"  # draft|frozen|completed
+staged_rollout_ref: "PoC2/poc2_production_rollout_plan.yaml"
+stage_profiles_ref: "PoC2/poc2_stage_profiles.yaml"
 
 purpose:
   primary:
@@ -315,3 +317,4 @@ notes:
   - "PoC2 is operational-economics validation, not semantic model-evaluation."
   - "Publish negative/zero-gain regions to prevent survivorship bias."
   - "Use this plan as frozen prereg once approved."
+  - "For production-load escalation and promotion gates, follow PoC2/poc2_production_rollout_plan.yaml."

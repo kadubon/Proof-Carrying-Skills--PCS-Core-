@@ -1,0 +1,153 @@
+plan_version: "1.0.0"
+plan_id: "pcs-core-poc2-production-rollout-v1"
+title: "PoC2 Staged Production-Load Rollout Plan"
+language: "en"
+created_utc: "2026-02-13T00:00:00Z"
+status: "draft" # draft|frozen|completed
+
+objective:
+  primary:
+    - "Scale PoC2 from connectivity check to production-load evidence with predefined promotion gates."
+    - "Preserve fail-closed safety and auditability while increasing campaign size."
+  secondary:
+    - "Provide engineer-readable evidence packets per stage."
+    - "Prevent over-claim by binding claim scope to stage completion level."
+
+scientific_guardrails:
+  preregister_before_run: true
+  freeze_thresholds_before_stage: true
+  no_posthoc_threshold_tuning: true
+  disclose_all_runs_and_failures: true
+  disclose_deviations_and_exclusions: true
+  claim_boundary:
+    - "Operational economics only (latency/cost/failure/retry); not model quality uplift."
+    - "Claims are conditional on workload and cost assumptions."
+  forbidden_claims:
+    - "Universal gain across all workloads."
+    - "Production SLO guarantee from pilot data alone."
+
+artifacts_policy:
+  root: "PoC2/runs/"
+  required_per_stage:
+    - "<tag>_final_report.json"
+    - "<tag>_final_report.md"
+    - "<tag>_campaigns.csv"
+    - "<tag>_p2_summary.json"
+    - "<tag>_command_log.jsonl"
+    - "<tag>_gemini_requests.jsonl"
+    - "<tag>_gemini_responses.jsonl"
+    - "<tag>_gemini_errors.jsonl"
+  redaction_rules:
+    - "Never log API keys."
+    - "Never log raw PII payloads."
+    - "Use request_hash/response_hash for traceability."
+
+stage_profiles_ref: "PoC2/poc2_stage_profiles.yaml"
+generated_config_dir: "PoC2/staged-configs"
+
+stages:
+  - id: "S0_CONNECTIVITY"
+    purpose: "Validate credentials, API reachability, logging, and gate plumbing with minimal cost."
+    expected_scale:
+      relative_cells: "minimal"
+      relative_repetitions: "minimal"
+    hard_gates:
+      - "P1_CONFORMANCE_SMOKE pass"
+      - "P3_STRESS_FAIL_CLOSED pass"
+      - "P4_DETERMINISM_SAMPLE pass"
+      - "failure_rate <= 0.05"
+    promotion_condition: "All hard_gates pass."
+    claim_scope:
+      allowed:
+        - "System connectivity and protocol readiness only."
+      forbidden:
+        - "No latency/cost improvement claims."
+
+  - id: "S1_PILOT"
+    purpose: "Small but non-trivial matrix to expose integration regressions and retry behavior."
+    expected_scale:
+      relative_cells: "small"
+      relative_repetitions: "low"
+    hard_gates:
+      - "All S0 gates remain pass."
+      - "failure_rate <= 0.03"
+      - "retry_statistics.avg_retry_per_operation <= 0.20"
+    promotion_condition: "Hard gates pass for two consecutive runs (different tags, same frozen config)."
+    claim_scope:
+      allowed:
+        - "Directional operational trend with explicit uncertainty."
+      forbidden:
+        - "No production-readiness claim."
+
+  - id: "S2_PREPROD"
+    purpose: "Medium-scale matrix to validate stability under broader operational factors."
+    expected_scale:
+      relative_cells: "medium"
+      relative_repetitions: "medium"
+    hard_gates:
+      - "All S1 gates remain pass."
+      - "failure_rate <= 0.02"
+      - "retry_statistics.avg_retry_per_operation <= 0.10"
+    promotion_condition: "Hard gates pass and no unresolved protocol deviations."
+    claim_scope:
+      allowed:
+        - "Qualified claim: specific positive/negative regions under documented assumptions."
+      forbidden:
+        - "No universal gain claim."
+
+  - id: "S3_FULL_EVIDENCE"
+    purpose: "Full evidence run for external reporting and engineer-facing operational decision."
+    expected_scale:
+      relative_cells: "full"
+      relative_repetitions: "high"
+    hard_gates:
+      - "All S2 gates remain pass."
+      - "failure_rate <= 0.01"
+      - "retry_statistics.avg_retry_per_operation <= 0.05"
+      - "95% CI lower bound > 0 for any metric only where explicitly claimed."
+    promotion_condition: "Hard gates pass and full artifact contract is complete."
+    claim_scope:
+      allowed:
+        - "Operational readiness recommendation scoped to measured conditions."
+      forbidden:
+        - "No claim beyond measured workload/cost envelope."
+
+analysis_and_reporting:
+  required_sections:
+    - "Experiment context and frozen config hash"
+    - "Latency improvement (mean + CI)"
+    - "Cost improvement (ms model and token model, mean + CI)"
+    - "Failure and retry statistics"
+    - "Token-usage-missing rate"
+    - "Determinism limitations and network-control notes"
+    - "Negative/zero-gain regions"
+    - "Claim/non-claim statement"
+  communication_template:
+    executive_summary_fields:
+      - "stage_id"
+      - "tag"
+      - "hard_pass"
+      - "failure_rate"
+      - "latency_improvement_mean_ci"
+      - "cost_improvement_ms_mean_ci"
+      - "cost_improvement_token_mean_ci"
+      - "retry_avg"
+      - "main_limitations"
+    engineering_appendix_fields:
+      - "exact command lines"
+      - "config_sha256"
+      - "runner_sha256"
+      - "gemini_driver_sha256"
+      - "artifact index"
+      - "deviation log"
+
+operational_risk_controls:
+  budget_control:
+    - "Track token usage and estimated spend after each stage."
+    - "Stop stage escalation when budget cap is exceeded."
+  stability_control:
+    - "Do not continue to next stage when fail-closed gate breaks."
+    - "Re-run only after documented fix and config freeze refresh."
+  external_dependency_control:
+    - "Document provider incidents/rate limits affecting results."
+    - "Keep ABBA pairing and fixed prompt template unchanged across stages."

@@ -106,6 +106,8 @@ python PoC2/poc2_operational_runner.py --config PoC2/poc2_operational_config.yam
 ```
 
 Guide: `PoC2/README.md`
+Production-load staged plan: `PoC2/poc2_production_rollout_plan.yaml`
+Stage profiles and generated configs: `PoC2/poc2_stage_profiles.yaml`, `PoC2/staged-configs/`
 
 ## Search Keywords
 

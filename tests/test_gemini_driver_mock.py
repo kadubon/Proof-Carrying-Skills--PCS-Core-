@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import random
+from pathlib import Path
 
 import pytest
 from google.genai.errors import APIError
 
+import PoC2.gemini_workload_driver as gemini_workload_driver
 from PoC2.gemini_workload_driver import GeminiWorkloadDriver
 
 
@@ -122,3 +124,16 @@ def test_non_429_4xx_no_retry(status_code: int) -> None:
     assert result["status_code"] == status_code
     assert result["retry_count"] == 0
     assert fake.models.calls == 1
+
+
+def test_api_key_loaded_from_poc2_env_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+    (tmp_path / "PoC2").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "PoC2/.env").write_text("GEMINI_API_KEY=file_key\n", encoding="utf-8")
+
+    gemini_workload_driver.reset_driver_cache()
+    driver = GeminiWorkloadDriver(_cfg(), client=_FakeClient([]), sleep_fn=lambda _: None, rng=random.Random(5))
+    assert driver.api_key == "file_key"
+    assert driver.api_key_env_used == "GEMINI_API_KEY@PoC2/.env"

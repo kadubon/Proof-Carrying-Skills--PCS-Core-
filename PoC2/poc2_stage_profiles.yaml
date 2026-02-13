@@ -1,0 +1,155 @@
+version: "1.0.0"
+description: "Stage overrides for production-load rollout. Applied on top of PoC2/poc2_operational_config.yaml."
+
+stages:
+  - id: "S0_CONNECTIVITY"
+    tag: "poc2_s0_connectivity"
+    overrides:
+      plan_ref: "PoC2/poc2_production_rollout_plan.yaml"
+      workloads:
+        complexity_profiles:
+          light:
+            enabled: true
+            baseline_iterations: 1000
+            run_iterations: 1000
+            verify_iterations: 50
+          medium:
+            enabled: false
+            baseline_iterations: 1000
+            run_iterations: 1000
+            verify_iterations: 50
+          heavy:
+            enabled: false
+            baseline_iterations: 1000
+            run_iterations: 1000
+            verify_iterations: 50
+      experiment:
+        concurrency_levels: [1]
+        reuse_counts_N: [1]
+        campaign_repetitions_per_cell: 1
+        warmup_episodes: 0
+        max_cells: 1
+      cost_model:
+        scenarios:
+          - id: C1_equal_cost
+            c_check_to_c_run_ratio: 1.0
+        fixed_overheads:
+          - id: F0_zero
+            c_registry_fixed: 0.0
+            c_cert_fixed: 0.0
+      analysis:
+        bootstrap_samples: 500
+      determinism:
+        repeats_per_receipt: 2
+
+  - id: "S1_PILOT"
+    tag: "poc2_s1_pilot"
+    overrides:
+      plan_ref: "PoC2/poc2_production_rollout_plan.yaml"
+      workloads:
+        complexity_profiles:
+          light:
+            enabled: true
+          medium:
+            enabled: true
+          heavy:
+            enabled: false
+      experiment:
+        concurrency_levels: [1, 4]
+        reuse_counts_N: [1, 3, 10]
+        campaign_repetitions_per_cell: 3
+        warmup_episodes: 1
+        max_cells: 12
+      cost_model:
+        scenarios:
+          - id: C1_equal_cost
+            c_check_to_c_run_ratio: 1.0
+          - id: C2_checker_advantage
+            c_check_to_c_run_ratio: 0.75
+        fixed_overheads:
+          - id: F0_zero
+            c_registry_fixed: 0.0
+            c_cert_fixed: 0.0
+          - id: F1_small
+            c_registry_fixed: 0.001
+            c_cert_fixed: 0.0005
+      analysis:
+        bootstrap_samples: 2000
+      determinism:
+        repeats_per_receipt: 10
+
+  - id: "S2_PREPROD"
+    tag: "poc2_s2_preprod"
+    overrides:
+      plan_ref: "PoC2/poc2_production_rollout_plan.yaml"
+      workloads:
+        complexity_profiles:
+          light:
+            enabled: true
+          medium:
+            enabled: true
+          heavy:
+            enabled: true
+      experiment:
+        concurrency_levels: [1, 4]
+        reuse_counts_N: [1, 3, 10]
+        campaign_repetitions_per_cell: 5
+        warmup_episodes: 1
+        max_cells: 36
+      cost_model:
+        scenarios:
+          - id: C1_equal_cost
+            c_check_to_c_run_ratio: 1.0
+          - id: C2_checker_advantage
+            c_check_to_c_run_ratio: 0.75
+          - id: C3_adverse_checker
+            c_check_to_c_run_ratio: 1.25
+        fixed_overheads:
+          - id: F0_zero
+            c_registry_fixed: 0.0
+            c_cert_fixed: 0.0
+          - id: F1_small
+            c_registry_fixed: 0.001
+            c_cert_fixed: 0.0005
+      analysis:
+        bootstrap_samples: 4000
+      determinism:
+        repeats_per_receipt: 20
+
+  - id: "S3_FULL_EVIDENCE"
+    tag: "poc2_s3_full"
+    overrides:
+      plan_ref: "PoC2/poc2_production_rollout_plan.yaml"
+      workloads:
+        complexity_profiles:
+          light:
+            enabled: true
+          medium:
+            enabled: true
+          heavy:
+            enabled: true
+      experiment:
+        concurrency_levels: [1, 4]
+        reuse_counts_N: [1, 3, 10]
+        campaign_repetitions_per_cell: 10
+        warmup_episodes: 1
+        max_cells: 0
+      cost_model:
+        scenarios:
+          - id: C1_equal_cost
+            c_check_to_c_run_ratio: 1.0
+          - id: C2_checker_advantage
+            c_check_to_c_run_ratio: 0.75
+          - id: C3_adverse_checker
+            c_check_to_c_run_ratio: 1.25
+        fixed_overheads:
+          - id: F0_zero
+            c_registry_fixed: 0.0
+            c_cert_fixed: 0.0
+          - id: F1_small
+            c_registry_fixed: 0.001
+            c_cert_fixed: 0.0005
+      analysis:
+        bootstrap_samples: 10000
+      determinism:
+        repeats_per_receipt: 30

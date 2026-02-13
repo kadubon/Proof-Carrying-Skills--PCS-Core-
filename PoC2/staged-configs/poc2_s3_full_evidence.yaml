@@ -1,0 +1,126 @@
+artifact_prefix: poc2_s3_full
+plan_ref: PoC2/poc2_production_rollout_plan.yaml
+repo_root: .
+paths:
+  operational_cache_dir: PoC2/runs/operational_cache
+execution:
+  per_episode_timeout_sec: 120
+commands:
+  conformance: python compatibility-suite/run_vectors.py
+  verifier_template: python reference-checker/verifier.py --bundle {bundle}
+workload:
+  backend: gemini_api
+  gemini:
+    model: gemini-2.5-flash-lite
+    api_key_env: GEMINI_API_KEY
+    timeout_seconds: 45
+    max_retries: 5
+    backoff_initial_ms: 300
+    backoff_max_ms: 5000
+    temperature: 0.0
+    max_output_tokens: 256
+    top_p: 1.0
+    top_k: 40
+    candidate_count: 1
+    prompt_template: 'You are a deterministic benchmark assistant.
+
+      Return concise output only.
+
+      INPUT:
+
+      {{input_text}}
+
+      '
+workloads:
+  families:
+  - id: W1_gemini_api
+    enabled: true
+    manifest: PoC/workloads/operational_input_manifest.json
+    default_input_text: Summarize deterministic verification outcomes for repeated
+      invocation acceptance.
+    commands:
+      baseline: python PoC/operational_harness.py --mode baseline --campaign {campaign_idx}
+        --episode {episode_idx} --seed {seed} --manifest {manifest} --cache-dir {cache_dir}
+        --baseline-iterations {baseline_iterations}
+      pcs_run: python PoC/operational_harness.py --mode pcs-run --campaign {campaign_idx}
+        --seed {seed} --manifest {manifest} --cache-dir {cache_dir} --run-iterations
+        {run_iterations}
+      pcs_verify: python PoC/operational_harness.py --mode pcs-verify --campaign {campaign_idx}
+        --episode {episode_idx} --seed {seed} --manifest {manifest} --cache-dir {cache_dir}
+        --verify-iterations {verify_iterations}
+  complexity_profiles:
+    light:
+      enabled: true
+      baseline_iterations: 30000
+      run_iterations: 30000
+      verify_iterations: 800
+    medium:
+      enabled: true
+      baseline_iterations: 45000
+      run_iterations: 45000
+      verify_iterations: 1200
+    heavy:
+      enabled: true
+      baseline_iterations: 60000
+      run_iterations: 60000
+      verify_iterations: 1800
+experiment:
+  concurrency_levels:
+  - 1
+  - 4
+  reuse_counts_N:
+  - 1
+  - 3
+  - 10
+  campaign_repetitions_per_cell: 10
+  warmup_episodes: 1
+  random_seeds:
+  - 101
+  - 202
+  - 303
+  - 404
+  - 505
+  order_seed: 20260213
+  max_cells: 0
+cost_model:
+  c_run_per_ms: 1.0e-06
+  c_hash_per_op: 1.0e-07
+  input_token_usd: 3.5e-07
+  output_token_usd: 1.05e-06
+  fallback_ms_cost_if_usage_missing: 1.0e-06
+  scenarios:
+  - id: C1_equal_cost
+    c_check_to_c_run_ratio: 1.0
+  - id: C2_checker_advantage
+    c_check_to_c_run_ratio: 0.75
+  - id: C3_adverse_checker
+    c_check_to_c_run_ratio: 1.25
+  fixed_overheads:
+  - id: F0_zero
+    c_registry_fixed: 0.0
+    c_cert_fixed: 0.0
+  - id: F1_small
+    c_registry_fixed: 0.001
+    c_cert_fixed: 0.0005
+analysis:
+  bootstrap_samples: 10000
+stress_fail_closed:
+  injections:
+  - id: invalid_opvm_ast
+    bundle: test-vectors/reject/invalid_opvm_ast/bundle.json
+    expected_reject: true
+  - id: invocation_mismatch
+    bundle: test-vectors/reject/invocation_mismatch/bundle.json
+    expected_reject: true
+  - id: gas_exhausted
+    bundle: test-vectors/reject/gas_exhausted/bundle.json
+    expected_reject: true
+determinism:
+  sample_accept_bundles:
+  - test-vectors/accept/basic_echo/bundle.json
+  - test-vectors/accept/basic_echo_bytes/bundle.json
+  repeats_per_receipt: 30
+_stage_meta:
+  stage_id: S3_FULL_EVIDENCE
+  source_base_config: PoC2/poc2_operational_config.yaml
+  source_profiles: PoC2/poc2_stage_profiles.yaml
