@@ -2,3 +2,13 @@ __pycache__/
 *.pyc
 paper/
 PoC/runs/
+PoC2/runs/
+PoC2/.env
+PoC2/.env.*
+PoC2/secrets/
+PoC2/*key*.txt
+PoC2/*key*.json
+.env
+.env.*
+!.env.example
+!PoC2/.env.example

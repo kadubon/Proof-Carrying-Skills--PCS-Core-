@@ -45,6 +45,16 @@ Operational pilot harness in this repository:
 - `PoC/operational_harness.py`
 - `PoC/workloads/operational_input_manifest.json`
 
+## PoC2 Cloud LLM Operational Benchmark
+
+Gemini API-based operational experiments are provided in `PoC2/`.
+
+- runner: `PoC2/poc2_operational_runner.py`
+- config: `PoC2/poc2_operational_config.yaml`
+- guide: `PoC2/README.md`
+
+PoC2 keeps fail-closed handling, ABBA paired crossover, and emits Gemini audit logs (`requests`, `responses`, `errors`) for external review.
+
 
 - Provide workload disclosure metadata in config:
   - `workload_id`

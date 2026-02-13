@@ -92,6 +92,21 @@ python compatibility-suite/run_vectors.py
 python PoC/e6_optional_cost_runner.py --config PoC/e6_optional_cost_config.example.json --out-dir PoC/runs --tag e6_optional_cost
 ```
 
+## PoC2 (Gemini API Operational Run)
+
+PoC2 provides a cloud-LLM operational benchmark with:
+
+- fail-closed API handling
+- deterministic verifier path for reuse checks
+- ABBA crossover and audit JSONL artifacts
+- ms-based and token-based cost reporting
+
+```powershell
+python PoC2/poc2_operational_runner.py --config PoC2/poc2_operational_config.yaml --out-dir PoC2/runs --tag poc2_gemini
+```
+
+Guide: `PoC2/README.md`
+
 ## Search Keywords
 
 Proof-Carrying Skills, PCS-Core, Stop Recomputing for AI/LLMs, compute-saving inference reuse, deterministic verifier, Verifiable Trace Receipt, GLUE receipt, Merkle inclusion proof, no-meta trust, inference cost reduction, latency reduction.
