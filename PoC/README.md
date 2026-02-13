@@ -56,6 +56,7 @@ Gemini API-based operational experiments are provided in `PoC2/`.
 PoC2 keeps fail-closed handling, ABBA paired crossover, and emits Gemini audit logs (`requests`, `responses`, `errors`) for external review.
 Staged production-load rollout is defined in `PoC2/poc2_production_rollout_plan.yaml`.
 
+### Operational Disclosure Hygiene
 
 - Provide workload disclosure metadata in config:
   - `workload_id`

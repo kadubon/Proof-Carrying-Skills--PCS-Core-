@@ -1,0 +1,890 @@
+{
+  "generated_utc": "2026-02-13T04:57:24Z",
+  "run_tags": [
+    "poc2_s1_pilot_run1",
+    "poc2_s1_pilot_run2",
+    "poc2_s1_pilot_run3",
+    "poc2_s2_preprod_run1",
+    "poc2_s3_full_evidence_run1"
+  ],
+  "runs": [
+    {
+      "tag": "poc2_s1_pilot_run1",
+      "hard_pass": true,
+      "hard_gates": {
+        "P1_CONFORMANCE_SMOKE": true,
+        "P3_STRESS_FAIL_CLOSED": true,
+        "P4_DETERMINISM_SAMPLE": true
+      },
+      "p2_summary": {
+        "backend": "gemini_api",
+        "campaign_rows": 36,
+        "cells": 12,
+        "cost_improvement": {
+          "ci_high": 0.7212535127603443,
+          "ci_low": 0.4792700352597854,
+          "mean": 0.6182652743272813,
+          "n": 2000.0
+        },
+        "cost_improvement_ms_model": {
+          "ci_high": 0.7212535127603443,
+          "ci_low": 0.4792700352597854,
+          "mean": 0.6182652743272813,
+          "n": 2000.0
+        },
+        "cost_improvement_token_model": {
+          "ci_high": -3.022582933312947,
+          "ci_low": -8.430583551911996,
+          "mean": -5.2742518482483,
+          "n": 2000.0
+        },
+        "determinism_limitations": [
+          "Cloud API responses can remain non-deterministic even with fixed generation config.",
+          "Network and provider-side queue jitter cannot be fully eliminated; ABBA paired design only mitigates drift.",
+          "Token accounting availability depends on provider usage metadata and may fall back to ms-based approximation."
+        ],
+        "failure_rate": 0.0,
+        "latency_improvement": {
+          "ci_high": 0.8439105055207984,
+          "ci_low": 0.717475903009102,
+          "mean": 0.7899790699013158,
+          "n": 2000.0
+        },
+        "network_control_notes": [
+          "Paired baseline/PCS campaigns use identical workload inputs and fixed prompt template.",
+          "Randomized ABBA crossover is applied per campaign to reduce temporal drift bias."
+        ],
+        "parquet_written": false,
+        "pass_rows": 36,
+        "retry_statistics": {
+          "avg_retry_per_operation": 0.0,
+          "max_retry_per_campaign": 0,
+          "total_operations": 372,
+          "total_retry_attempts": 0
+        },
+        "token_usage_missing_rate": 0.45161290322580644,
+        "ts_utc": "2026-02-13T01:39:54Z"
+      },
+      "protocol_fingerprint": {
+        "captured_utc": "2026-02-13T01:35:22Z",
+        "config_sha256": "01c191842d657992c4f51d21f5fe24ecde7c8a1821ef9f62939fa22d506ee9ec",
+        "gemini_driver_sha256": "6976e030a3b33cdd4605154fda41a5c51c5abb162286cca3868b40b4a56110fe",
+        "plan_ref": "C:\\Users\\1991m\\Proof-Carrying Skills (PCS-Core)\\PoC2\\poc2_production_rollout_plan.yaml",
+        "plan_sha256": "3b18c5cd3e9dccb5f0cc7ca4a39e48c77b71d6fc62a631b99ff3e23d6f715db1",
+        "runner_sha256": "01cbce2d80945165e3ed3754c546870d28790840deff3a3e0480ba2a4bac7166"
+      },
+      "stage_id": "S1_PILOT",
+      "summary_from_campaign_rows": {
+        "rows": 36,
+        "pass_rows": 36,
+        "latency_improvement": {
+          "mean": 0.7893093586235963,
+          "ci_low": 0.7146534143770903,
+          "ci_high": 0.8405813488677467,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": 0.6183700568211026,
+          "ci_low": 0.477800168412575,
+          "ci_high": 0.7204973782473569,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -5.290239129738437,
+          "ci_low": -8.34069772555407,
+          "ci_high": -3.003189429077125,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.0
+      }
+    },
+    {
+      "tag": "poc2_s1_pilot_run2",
+      "hard_pass": true,
+      "hard_gates": {
+        "P1_CONFORMANCE_SMOKE": true,
+        "P3_STRESS_FAIL_CLOSED": true,
+        "P4_DETERMINISM_SAMPLE": true
+      },
+      "p2_summary": {
+        "backend": "gemini_api",
+        "campaign_rows": 36,
+        "cells": 12,
+        "cost_improvement": {
+          "ci_high": 0.7072600084351635,
+          "ci_low": 0.33745875183538576,
+          "mean": 0.5652050695680076,
+          "n": 2000.0
+        },
+        "cost_improvement_ms_model": {
+          "ci_high": 0.7072600084351635,
+          "ci_low": 0.33745875183538576,
+          "mean": 0.5652050695680076,
+          "n": 2000.0
+        },
+        "cost_improvement_token_model": {
+          "ci_high": -3.0225816375620376,
+          "ci_low": -8.430581280788926,
+          "mean": -5.2742505193097,
+          "n": 2000.0
+        },
+        "determinism_limitations": [
+          "Cloud API responses can remain non-deterministic even with fixed generation config.",
+          "Network and provider-side queue jitter cannot be fully eliminated; ABBA paired design only mitigates drift.",
+          "Token accounting availability depends on provider usage metadata and may fall back to ms-based approximation."
+        ],
+        "failure_rate": 0.0,
+        "latency_improvement": {
+          "ci_high": 0.8280267552880106,
+          "ci_low": 0.548033512157613,
+          "mean": 0.7276166898153976,
+          "n": 2000.0
+        },
+        "network_control_notes": [
+          "Paired baseline/PCS campaigns use identical workload inputs and fixed prompt template.",
+          "Randomized ABBA crossover is applied per campaign to reduce temporal drift bias."
+        ],
+        "parquet_written": false,
+        "pass_rows": 36,
+        "retry_statistics": {
+          "avg_retry_per_operation": 0.0,
+          "max_retry_per_campaign": 0,
+          "total_operations": 372,
+          "total_retry_attempts": 0
+        },
+        "token_usage_missing_rate": 0.45161290322580644,
+        "ts_utc": "2026-02-13T01:45:31Z"
+      },
+      "protocol_fingerprint": {
+        "captured_utc": "2026-02-13T01:40:24Z",
+        "config_sha256": "01c191842d657992c4f51d21f5fe24ecde7c8a1821ef9f62939fa22d506ee9ec",
+        "gemini_driver_sha256": "6976e030a3b33cdd4605154fda41a5c51c5abb162286cca3868b40b4a56110fe",
+        "plan_ref": "C:\\Users\\1991m\\Proof-Carrying Skills (PCS-Core)\\PoC2\\poc2_production_rollout_plan.yaml",
+        "plan_sha256": "3b18c5cd3e9dccb5f0cc7ca4a39e48c77b71d6fc62a631b99ff3e23d6f715db1",
+        "runner_sha256": "01cbce2d80945165e3ed3754c546870d28790840deff3a3e0480ba2a4bac7166"
+      },
+      "stage_id": "S1_PILOT",
+      "summary_from_campaign_rows": {
+        "rows": 36,
+        "pass_rows": 36,
+        "latency_improvement": {
+          "mean": 0.7292579355747287,
+          "ci_low": 0.5398896346211626,
+          "ci_high": 0.8309485674526275,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": 0.5650481096209272,
+          "ci_low": 0.34179589486453654,
+          "ci_high": 0.7040431052284177,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -5.290237810237658,
+          "ci_low": -8.34069692846849,
+          "ci_high": -3.003187995446793,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.0
+      }
+    },
+    {
+      "tag": "poc2_s1_pilot_run3",
+      "hard_pass": true,
+      "hard_gates": {
+        "P1_CONFORMANCE_SMOKE": true,
+        "P3_STRESS_FAIL_CLOSED": true,
+        "P4_DETERMINISM_SAMPLE": true
+      },
+      "p2_summary": {
+        "backend": "gemini_api",
+        "campaign_rows": 36,
+        "cells": 12,
+        "cost_improvement": {
+          "ci_high": 0.7182841019397022,
+          "ci_low": 0.46700972000006835,
+          "mean": 0.607320956306902,
+          "n": 2000.0
+        },
+        "cost_improvement_ms_model": {
+          "ci_high": 0.7182841019397022,
+          "ci_low": 0.46700972000006835,
+          "mean": 0.607320956306902,
+          "n": 2000.0
+        },
+        "cost_improvement_token_model": {
+          "ci_high": -3.022583973849665,
+          "ci_low": -8.430583168060545,
+          "mean": -5.274251594185401,
+          "n": 2000.0
+        },
+        "determinism_limitations": [
+          "Cloud API responses can remain non-deterministic even with fixed generation config.",
+          "Network and provider-side queue jitter cannot be fully eliminated; ABBA paired design only mitigates drift.",
+          "Token accounting availability depends on provider usage metadata and may fall back to ms-based approximation."
+        ],
+        "failure_rate": 0.0,
+        "latency_improvement": {
+          "ci_high": 0.8278481948032466,
+          "ci_low": 0.6714425331669408,
+          "mean": 0.7606377769237772,
+          "n": 2000.0
+        },
+        "network_control_notes": [
+          "Paired baseline/PCS campaigns use identical workload inputs and fixed prompt template.",
+          "Randomized ABBA crossover is applied per campaign to reduce temporal drift bias."
+        ],
+        "parquet_written": false,
+        "pass_rows": 36,
+        "retry_statistics": {
+          "avg_retry_per_operation": 0.008064516129032258,
+          "max_retry_per_campaign": 2,
+          "total_operations": 372,
+          "total_retry_attempts": 3
+        },
+        "token_usage_missing_rate": 0.45161290322580644,
+        "ts_utc": "2026-02-13T01:54:06Z"
+      },
+      "protocol_fingerprint": {
+        "captured_utc": "2026-02-13T01:49:02Z",
+        "config_sha256": "01c191842d657992c4f51d21f5fe24ecde7c8a1821ef9f62939fa22d506ee9ec",
+        "gemini_driver_sha256": "6976e030a3b33cdd4605154fda41a5c51c5abb162286cca3868b40b4a56110fe",
+        "plan_ref": "C:\\Users\\1991m\\Proof-Carrying Skills (PCS-Core)\\PoC2\\poc2_production_rollout_plan.yaml",
+        "plan_sha256": "3b18c5cd3e9dccb5f0cc7ca4a39e48c77b71d6fc62a631b99ff3e23d6f715db1",
+        "runner_sha256": "01cbce2d80945165e3ed3754c546870d28790840deff3a3e0480ba2a4bac7166"
+      },
+      "stage_id": "S1_PILOT",
+      "summary_from_campaign_rows": {
+        "rows": 36,
+        "pass_rows": 36,
+        "latency_improvement": {
+          "mean": 0.7608309966883777,
+          "ci_low": 0.6658887058268748,
+          "ci_high": 0.8281720617674212,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": 0.6065082964068855,
+          "ci_low": 0.46693941320498045,
+          "ci_high": 0.7106973932259852,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -5.290238879782769,
+          "ci_low": -8.34069877001721,
+          "ci_high": -3.0031894290786587,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.008064516129032258
+      }
+    },
+    {
+      "tag": "poc2_s2_preprod_run1",
+      "hard_pass": true,
+      "hard_gates": {
+        "P1_CONFORMANCE_SMOKE": true,
+        "P3_STRESS_FAIL_CLOSED": true,
+        "P4_DETERMINISM_SAMPLE": true
+      },
+      "p2_summary": {
+        "backend": "gemini_api",
+        "campaign_rows": 180,
+        "cells": 36,
+        "cost_improvement": {
+          "ci_high": 0.6850025996646063,
+          "ci_low": 0.5228590057162352,
+          "mean": 0.6129413142700206,
+          "n": 4000.0
+        },
+        "cost_improvement_ms_model": {
+          "ci_high": 0.6850025996646063,
+          "ci_low": 0.5228590057162352,
+          "mean": 0.6129413142700206,
+          "n": 4000.0
+        },
+        "cost_improvement_token_model": {
+          "ci_high": -4.116587190589958,
+          "ci_low": -6.417317457496147,
+          "mean": -5.1944583067468555,
+          "n": 4000.0
+        },
+        "determinism_limitations": [
+          "Cloud API responses can remain non-deterministic even with fixed generation config.",
+          "Network and provider-side queue jitter cannot be fully eliminated; ABBA paired design only mitigates drift.",
+          "Token accounting availability depends on provider usage metadata and may fall back to ms-based approximation."
+        ],
+        "failure_rate": 0.0,
+        "latency_improvement": {
+          "ci_high": 0.8004472679548031,
+          "ci_low": 0.6769741117603826,
+          "mean": 0.7477943335269901,
+          "n": 4000.0
+        },
+        "network_control_notes": [
+          "Paired baseline/PCS campaigns use identical workload inputs and fixed prompt template.",
+          "Randomized ABBA crossover is applied per campaign to reduce temporal drift bias."
+        ],
+        "parquet_written": false,
+        "pass_rows": 180,
+        "retry_statistics": {
+          "avg_retry_per_operation": 0.01021505376344086,
+          "max_retry_per_campaign": 2,
+          "total_operations": 1860,
+          "total_retry_attempts": 19
+        },
+        "token_usage_missing_rate": 0.45161290322580644,
+        "ts_utc": "2026-02-13T02:29:25Z"
+      },
+      "protocol_fingerprint": {
+        "captured_utc": "2026-02-13T02:00:52Z",
+        "config_sha256": "9e7ccd64457240742667eedd58e621729437bff4b38b0e38dadc8141feab59bf",
+        "gemini_driver_sha256": "6976e030a3b33cdd4605154fda41a5c51c5abb162286cca3868b40b4a56110fe",
+        "plan_ref": "C:\\Users\\1991m\\Proof-Carrying Skills (PCS-Core)\\PoC2\\poc2_production_rollout_plan.yaml",
+        "plan_sha256": "3b18c5cd3e9dccb5f0cc7ca4a39e48c77b71d6fc62a631b99ff3e23d6f715db1",
+        "runner_sha256": "01cbce2d80945165e3ed3754c546870d28790840deff3a3e0480ba2a4bac7166"
+      },
+      "stage_id": "S2_PREPROD",
+      "summary_from_campaign_rows": {
+        "rows": 180,
+        "pass_rows": 180,
+        "latency_improvement": {
+          "mean": 0.747765286717636,
+          "ci_low": 0.6749393877618444,
+          "ci_high": 0.8020071778216489,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": 0.6125047973823695,
+          "ci_low": 0.5220037046820398,
+          "ci_high": 0.6843201991122698,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -5.211816892554268,
+          "ci_low": -6.4511362790908695,
+          "ci_high": -4.122024321283339,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.01021505376344086
+      }
+    },
+    {
+      "tag": "poc2_s3_full_evidence_run1",
+      "hard_pass": true,
+      "hard_gates": {
+        "P1_CONFORMANCE_SMOKE": true,
+        "P3_STRESS_FAIL_CLOSED": true,
+        "P4_DETERMINISM_SAMPLE": true
+      },
+      "p2_summary": {
+        "backend": "gemini_api",
+        "campaign_rows": 1080,
+        "cells": 108,
+        "cost_improvement": {
+          "ci_high": 0.6482834281635361,
+          "ci_low": 0.5944121459524916,
+          "mean": 0.6225851358685028,
+          "n": 10000.0
+        },
+        "cost_improvement_ms_model": {
+          "ci_high": 0.6482834281635361,
+          "ci_low": 0.5944121459524916,
+          "mean": 0.6225851358685028,
+          "n": 10000.0
+        },
+        "cost_improvement_token_model": {
+          "ci_high": -4.718613038686969,
+          "ci_low": -5.654141175588248,
+          "mean": -5.188405637803571,
+          "n": 10000.0
+        },
+        "determinism_limitations": [
+          "Cloud API responses can remain non-deterministic even with fixed generation config.",
+          "Network and provider-side queue jitter cannot be fully eliminated; ABBA paired design only mitigates drift.",
+          "Token accounting availability depends on provider usage metadata and may fall back to ms-based approximation."
+        ],
+        "failure_rate": 0.0,
+        "latency_improvement": {
+          "ci_high": 0.7954268739368154,
+          "ci_low": 0.7600196727815658,
+          "mean": 0.7790537076758746,
+          "n": 10000.0
+        },
+        "network_control_notes": [
+          "Paired baseline/PCS campaigns use identical workload inputs and fixed prompt template.",
+          "Randomized ABBA crossover is applied per campaign to reduce temporal drift bias."
+        ],
+        "parquet_written": false,
+        "pass_rows": 1080,
+        "retry_statistics": {
+          "avg_retry_per_operation": 0.0008960573476702509,
+          "max_retry_per_campaign": 1,
+          "total_operations": 11160,
+          "total_retry_attempts": 10
+        },
+        "token_usage_missing_rate": 0.45161290322580644,
+        "ts_utc": "2026-02-13T04:54:23Z"
+      },
+      "protocol_fingerprint": {
+        "captured_utc": "2026-02-13T02:29:55Z",
+        "config_sha256": "a7c1dfabb235d68d26feaff70e65a0b04be6026c33fe179b13883de259ec9f91",
+        "gemini_driver_sha256": "6976e030a3b33cdd4605154fda41a5c51c5abb162286cca3868b40b4a56110fe",
+        "plan_ref": "C:\\Users\\1991m\\Proof-Carrying Skills (PCS-Core)\\PoC2\\poc2_production_rollout_plan.yaml",
+        "plan_sha256": "3b18c5cd3e9dccb5f0cc7ca4a39e48c77b71d6fc62a631b99ff3e23d6f715db1",
+        "runner_sha256": "01cbce2d80945165e3ed3754c546870d28790840deff3a3e0480ba2a4bac7166"
+      },
+      "stage_id": "S3_FULL_EVIDENCE",
+      "summary_from_campaign_rows": {
+        "rows": 1080,
+        "pass_rows": 1080,
+        "latency_improvement": {
+          "mean": 0.7789270607883555,
+          "ci_low": 0.7591711610525139,
+          "ci_high": 0.7953253864680175,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": 0.6225436330320088,
+          "ci_low": 0.5945738418581024,
+          "ci_high": 0.6478024384612173,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -5.184129999387545,
+          "ci_low": -5.670789970036635,
+          "ci_high": -4.733219516635363,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.0008960573476702509
+      }
+    }
+  ],
+  "combined_summary": {
+    "rows": 1368,
+    "pass_rows": 1368,
+    "latency_improvement": {
+      "mean": 0.7734202937032119,
+      "ci_low": 0.7557676160984736,
+      "ci_high": 0.7888804351618846,
+      "n": 5000.0
+    },
+    "cost_improvement_ms": {
+      "mean": 0.6198547106074478,
+      "ci_low": 0.5948226353077299,
+      "ci_high": 0.6428393480726005,
+      "n": 5000.0
+    },
+    "cost_improvement_token": {
+      "mean": -5.183168399552159,
+      "ci_low": -5.6044367516020674,
+      "ci_high": -4.781930564236489,
+      "n": 5000.0
+    },
+    "failure_rate_estimated": 0.0,
+    "retry_avg_per_operation_estimated": 0.0022637238256932655
+  },
+  "threshold_analysis": {
+    "by_n_reuse": [
+      {
+        "N_reuse": 1,
+        "rows": 456,
+        "pass_rows": 456,
+        "latency_improvement": {
+          "mean": -0.1680244724320758,
+          "ci_low": -0.35362667577440376,
+          "ci_high": -0.029819097878082346,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": -0.8885252115982095,
+          "ci_low": -1.0950710700520965,
+          "ci_high": -0.7259501089979945,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -27.807283142499347,
+          "ci_low": -30.27423046252024,
+          "ci_high": -25.269835701270026,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.006578947368421052
+      },
+      {
+        "N_reuse": 3,
+        "rows": 456,
+        "pass_rows": 456,
+        "latency_improvement": {
+          "mean": 0.6707855435426973,
+          "ci_low": 0.6434145738992969,
+          "ci_high": 0.6980580373849858,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": 0.4393450003254385,
+          "ci_low": 0.39593191872612077,
+          "ci_high": 0.4877685038738435,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -8.612640136445142,
+          "ci_low": -9.467919517410534,
+          "ci_high": -7.759102274088157,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.002506265664160401
+      },
+      {
+        "N_reuse": 10,
+        "rows": 456,
+        "pass_rows": 456,
+        "latency_improvement": {
+          "mean": 0.8998078055913791,
+          "ci_low": 0.8940074628410138,
+          "ci_high": 0.905045848964406,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": 0.8275472132906508,
+          "ci_low": 0.8185868935692966,
+          "ci_high": 0.8363193769027208,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -1.888791410691127,
+          "ci_low": -2.1429901531440785,
+          "ci_high": -1.6425501993632174,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.0015664160401002505
+      }
+    ],
+    "by_n_reuse_and_scenario": [
+      {
+        "N_reuse": 1,
+        "cost_scenario": "C1_equal_cost",
+        "rows": 158,
+        "pass_rows": 158,
+        "latency_improvement": {
+          "mean": -0.09437736534101639,
+          "ci_low": -0.26215170197466175,
+          "ci_high": 0.02687441246547695,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": -0.818387175365469,
+          "ci_low": -1.0160009107138839,
+          "ci_high": -0.6384710676930412,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -27.82171818879987,
+          "ci_low": -32.41256576878524,
+          "ci_high": -23.6058223151236,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.004219409282700422
+      },
+      {
+        "N_reuse": 1,
+        "cost_scenario": "C2_checker_advantage",
+        "rows": 158,
+        "pass_rows": 158,
+        "latency_improvement": {
+          "mean": -0.08311795155200108,
+          "ci_low": -0.2111133077819367,
+          "ci_high": 0.023105652957612466,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": -0.8075366192506326,
+          "ci_low": -0.9915568249060429,
+          "ci_high": -0.6305403315095943,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -27.85095800583367,
+          "ci_low": -32.41256581573995,
+          "ci_high": -23.605823043138855,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.010548523206751054
+      },
+      {
+        "N_reuse": 1,
+        "cost_scenario": "C3_adverse_checker",
+        "rows": 140,
+        "pass_rows": 140,
+        "latency_improvement": {
+          "mean": -0.34487497688145635,
+          "ci_low": -0.8841208005013517,
+          "ci_high": 0.043868070067746845,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": -1.054594091065539,
+          "ci_low": -1.6361188155045956,
+          "ci_high": -0.6195797205091675,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -27.82359954174765,
+          "ci_low": -32.603800662599156,
+          "ci_high": -23.062322395964195,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.004761904761904762
+      },
+      {
+        "N_reuse": 3,
+        "cost_scenario": "C1_equal_cost",
+        "rows": 158,
+        "pass_rows": 158,
+        "latency_improvement": {
+          "mean": 0.666872942245146,
+          "ci_low": 0.5996806072843994,
+          "ci_high": 0.7283897791989947,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": 0.4453369645068369,
+          "ci_low": 0.35011772237044925,
+          "ci_high": 0.5479438332616908,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -8.61801978848524,
+          "ci_low": -10.140012055455845,
+          "ci_high": -7.204430841614775,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.0054249547920434
+      },
+      {
+        "N_reuse": 3,
+        "cost_scenario": "C2_checker_advantage",
+        "rows": 158,
+        "pass_rows": 158,
+        "latency_improvement": {
+          "mean": 0.6669281881961004,
+          "ci_low": 0.6352950667561392,
+          "ci_high": 0.6943521137971329,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": 0.4254737386556564,
+          "ci_low": 0.37544228327517204,
+          "ci_high": 0.47644901552634844,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -8.602543231199766,
+          "ci_low": -10.022590271097924,
+          "ci_high": -7.204429910057478,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.0018083182640144665
+      },
+      {
+        "N_reuse": 3,
+        "cost_scenario": "C3_adverse_checker",
+        "rows": 140,
+        "pass_rows": 140,
+        "latency_improvement": {
+          "mean": 0.6776594260725515,
+          "ci_low": 0.6418192504878664,
+          "ci_high": 0.7138182511506566,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": 0.44333734178441153,
+          "ci_low": 0.3744159125155937,
+          "ci_high": 0.5126451018530589,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -8.606699667541696,
+          "ci_low": -10.20375640074985,
+          "ci_high": -7.023264767212293,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.0
+      },
+      {
+        "N_reuse": 10,
+        "cost_scenario": "C1_equal_cost",
+        "rows": 158,
+        "pass_rows": 158,
+        "latency_improvement": {
+          "mean": 0.8974642706932285,
+          "ci_low": 0.8863585398979442,
+          "ci_high": 0.9067017152949401,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": 0.8256354551869013,
+          "ci_low": 0.8102019376414994,
+          "ci_high": 0.8406731894496379,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -1.8871108881002874,
+          "ci_low": -2.309391071135228,
+          "ci_high": -1.4639433197900997,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.0015069318866787222
+      },
+      {
+        "N_reuse": 10,
+        "cost_scenario": "C2_checker_advantage",
+        "rows": 158,
+        "pass_rows": 158,
+        "latency_improvement": {
+          "mean": 0.9016230015408064,
+          "ci_low": 0.8903110579678581,
+          "ci_high": 0.9110018899358409,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": 0.8276926431964423,
+          "ci_low": 0.8109775661658982,
+          "ci_high": 0.8449104559419206,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -1.887767047832504,
+          "ci_low": -2.3446179305319133,
+          "ci_high": -1.428719666049561,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.0012055455093429777
+      },
+      {
+        "N_reuse": 10,
+        "cost_scenario": "C3_adverse_checker",
+        "rows": 140,
+        "pass_rows": 140,
+        "latency_improvement": {
+          "mean": 0.9002166265840295,
+          "ci_low": 0.892589341539069,
+          "ci_high": 0.9077435122593247,
+          "n": 5000.0
+        },
+        "cost_improvement_ms": {
+          "mean": 0.8294134880191734,
+          "ci_low": 0.8141320925301402,
+          "ci_high": 0.8449679963907653,
+          "n": 5000.0
+        },
+        "cost_improvement_token": {
+          "mean": -1.8830420408640116,
+          "ci_low": -2.3239859713761506,
+          "ci_high": -1.409593890804758,
+          "n": 5000.0
+        },
+        "failure_rate_estimated": 0.0,
+        "retry_avg_per_operation_estimated": 0.0020408163265306124
+      }
+    ],
+    "threshold_ms_model_min_n": 3,
+    "threshold_all_models_min_n": null
+  },
+  "threshold_stability_by_stage": [
+    {
+      "stage_id": "S1_PILOT",
+      "rows": 108,
+      "pass_rows": 108,
+      "threshold_ms_model_min_n": 3,
+      "threshold_all_models_min_n": null,
+      "latency_ci_low": 0.6940662571352175,
+      "cost_ms_ci_low": 0.5155608828817864,
+      "cost_token_ci_low": -6.851923285190387
+    },
+    {
+      "stage_id": "S2_PREPROD",
+      "rows": 180,
+      "pass_rows": 180,
+      "threshold_ms_model_min_n": 3,
+      "threshold_all_models_min_n": null,
+      "latency_ci_low": 0.6741361811506783,
+      "cost_ms_ci_low": 0.5199831453169785,
+      "cost_token_ci_low": -6.462906043481597
+    },
+    {
+      "stage_id": "S3_FULL_EVIDENCE",
+      "rows": 1080,
+      "pass_rows": 1080,
+      "threshold_ms_model_min_n": 3,
+      "threshold_all_models_min_n": null,
+      "latency_ci_low": 0.7597196370255734,
+      "cost_ms_ci_low": 0.5954787565405161,
+      "cost_token_ci_low": -5.6647602766288
+    }
+  ],
+  "claim_readout": {
+    "can_claim_ms_model_effective_in_scope": true,
+    "ms_model_threshold_min_n_reuse": 3,
+    "can_claim_token_model_effective_in_scope": false,
+    "token_model_threshold_min_n_reuse": null,
+    "scope": {
+      "stage_profile": "MULTI_STAGE",
+      "stage_profiles_included": [
+        "S1_PILOT",
+        "S2_PREPROD",
+        "S3_FULL_EVIDENCE"
+      ],
+      "workload_ids_included": [
+        "W1_gemini_api"
+      ],
+      "complexity_tiers_included": [
+        "heavy",
+        "light",
+        "medium"
+      ],
+      "concurrency_levels_included": [
+        1,
+        4
+      ],
+      "reuse_counts_tested": [
+        1,
+        3,
+        10
+      ],
+      "cost_scenarios_included": [
+        "C1_equal_cost",
+        "C2_checker_advantage",
+        "C3_adverse_checker"
+      ],
+      "fixed_overheads_included": [
+        "F0_zero",
+        "F1_small"
+      ]
+    },
+    "non_claims": [
+      "No universal gain claim beyond tested stage profile and workload.",
+      "No semantic quality improvement claim.",
+      "Token-model gain is not claimed unless token CI lower bounds become positive."
+    ]
+  },
+  "scientific_honesty_notes": [
+    "All configured runs are included; no selective exclusion of negative regions.",
+    "ABBA crossover and fixed prompt settings reduce but do not eliminate network/provider drift.",
+    "Thresholds are conditional on the tested workload and cost assumptions."
+  ]
+}

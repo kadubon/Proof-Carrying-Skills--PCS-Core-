@@ -74,6 +74,20 @@ Generated config filenames:
 - `PoC2/staged-configs/poc2_s2_preprod.yaml`
 - `PoC2/staged-configs/poc2_s3_full_evidence.yaml`
 
+Generate combined engineer-facing report from multiple stage runs:
+
+```powershell
+python PoC2/generate_poc2_results_report.py --runs-dir PoC2/runs --tags poc2_s1_pilot_run1 poc2_s1_pilot_run2 --out-json PoC2/poc2_s1_results_report.json --out-md PoC2/poc2_s1_results_report.md
+```
+
+S2/S3 threshold-stability report:
+
+```powershell
+python PoC2/poc2_operational_runner.py --config PoC2/staged-configs/poc2_s2_preprod.yaml --out-dir PoC2/runs --tag poc2_s2_preprod_run1
+python PoC2/poc2_operational_runner.py --config PoC2/staged-configs/poc2_s3_full_evidence.yaml --out-dir PoC2/runs --tag poc2_s3_full_evidence_run1
+python PoC2/generate_poc2_results_report.py --runs-dir PoC2/runs --tags poc2_s2_preprod_run1 poc2_s3_full_evidence_run1 --out-json PoC2/poc2_s2s3_results_report.json --out-md PoC2/poc2_s2s3_results_report.md
+```
+
 ## Artifacts
 
 Main outputs under `PoC2/runs/`:
@@ -81,7 +95,12 @@ Main outputs under `PoC2/runs/`:
 - `<tag>_final_report.json`
 - `<tag>_final_report.md`
 - `<tag>_campaigns.csv`
+- `<tag>_latency_cost_raw.csv` (optional parquet companion: `<tag>_latency_cost_raw.parquet`)
+- `<tag>_replay_hashes.csv` (optional parquet companion: `<tag>_replay_hashes.parquet`)
 - `<tag>_p2_summary.json`
+- `<tag>_protocol_fingerprint.json`
+- `<tag>_environment_fingerprint.json`
+- `<tag>_workload_manifest_sha256.json`
 - `<tag>_command_log.jsonl`
 - `<tag>_gemini_requests.jsonl`
 - `<tag>_gemini_responses.jsonl`

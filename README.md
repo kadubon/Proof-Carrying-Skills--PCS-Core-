@@ -65,6 +65,7 @@ Operational-claim readiness in E6 requires command mode with workload disclosure
 - `test-vectors/`: accept/reject vectors for bundle and schema modes
 - `compatibility-suite/`: deterministic replay runner (runs vectors twice)
 - `PoC/`: experiment protocol and optional E6 external frame tooling
+- `PoC2/`: cloud-LLM operational benchmark with staged production-load rollout
 
 ## Quickstart
 
